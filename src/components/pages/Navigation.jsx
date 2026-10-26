@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { ChevronDown, ExternalLink, Menu, X, Home, Building2, Users, Phone, Mail } from "lucide-react";
+import {
+  ChevronDown,
+  ExternalLink,
+  Menu,
+  X,
+  Home,
+  Building2,
+  Users,
+  Phone,
+  Mail,
+} from "lucide-react";
 import logo from "../../assests/greenfield.webp";
 
 export default function Navigation() {
@@ -11,18 +21,24 @@ export default function Navigation() {
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+
     setIsOpen(false);
   };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
+
     window.addEventListener("scroll", handleScroll);
     handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Navigation links for Greenfield Housing
+  // Navigation links
   const navLinks = [
     { name: "Home", path: "/", icon: Home },
     { name: "About Us", path: "/aboutus", icon: Users },
@@ -33,11 +49,10 @@ export default function Navigation() {
   // Project dropdown items
   const projectItems = [
     { name: "All Projects", path: "/project" },
-  
   ];
 
   const navLinkClass = ({ isActive }) =>
-    `font-['Inter',sans-serif] text-base font-medium px-4 py-2.5 rounded-lg transition-all duration-200 ${
+    `font-['Montserrat',sans-serif] rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 xl:px-4 xl:text-base ${
       isActive
         ? "bg-emerald-50 text-emerald-700"
         : "text-gray-600 hover:bg-gray-50 hover:text-emerald-600"
@@ -47,19 +62,37 @@ export default function Navigation() {
     <header
       className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm py-3"
-          : "bg-white py-5"
+          ? "border-b border-gray-200 bg-white/90 py-3 shadow-sm backdrop-blur-md"
+          : "bg-white py-3.5 sm:py-5"
       }`}
     >
-      <nav className="mx-auto flex w-full items-center justify-between px-5 sm:px-8 lg:px-16 xl:px-24 2xl:px-32">
-        
-        {/* Logo Section */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+        header {
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          header *,
+          header *::before,
+          header *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      `}</style>
+
+      {/* Navigation bar */}
+      <nav className="mx-auto flex w-full items-center justify-between gap-3 px-3.5 min-[420px]:px-5 sm:px-8 lg:px-12 xl:px-16 2xl:px-24">
+        {/* Logo */}
         <Link
           to="/"
-          className="group flex items-center gap-4 flex-shrink-0"
+          className="group flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-4"
           onClick={() => setIsOpen(false)}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-200 bg-white p-1.5 shadow-sm transition-all group-hover:border-emerald-200 group-hover:shadow-md">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white p-1.5 shadow-sm transition-all group-hover:border-emerald-200 group-hover:shadow-md sm:h-12 sm:w-12">
             <img
               src={logo}
               alt="Greenfield Housing India Logo"
@@ -67,25 +100,30 @@ export default function Navigation() {
             />
           </div>
 
-          <div className="flex flex-col justify-center">
-            <span className="font-['Poppins',sans-serif] text-2xl font-bold tracking-tight text-gray-900">
+          <div className="flex min-w-0 flex-col justify-center">
+            <span className="font-['Poppins',sans-serif] text-lg font-bold tracking-tight text-gray-900 min-[420px]:text-xl sm:text-2xl">
               GREENFIELD<span className="text-emerald-600">.</span>
             </span>
-            <span className="font-['Inter',sans-serif] text-sm font-medium text-gray-500">
+
+            <span className="font-['Montserrat',sans-serif] text-[9px] font-medium leading-tight text-gray-500 min-[420px]:text-[10px] sm:text-sm">
               We Build Homes, Not Houses
             </span>
           </div>
         </Link>
 
-        {/* Desktop Nav Links - Full Width Centered */}
-        <div className="hidden lg:flex items-center gap-1 xl:gap-2 2xl:gap-3">
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-1 lg:flex xl:gap-2 2xl:gap-3">
           {navLinks.map((link) => (
-            <NavLink key={link.name} to={link.path} className={navLinkClass}>
+            <NavLink
+              key={link.name}
+              to={link.path}
+              className={navLinkClass}
+            >
               {link.name}
             </NavLink>
           ))}
 
-          {/* Projects Dropdown */}
+          {/* Projects dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setProjectsOpen(true)}
@@ -94,13 +132,15 @@ export default function Navigation() {
             <button
               type="button"
               onClick={() => setProjectsOpen((prev) => !prev)}
-              className={`font-['Inter',sans-serif] flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-base font-medium transition-all duration-200 ${
+              aria-expanded={projectsOpen}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-2.5 font-['Montserrat',sans-serif] text-sm font-medium transition-all duration-200 xl:px-4 xl:text-base ${
                 projectsOpen
                   ? "bg-emerald-50 text-emerald-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-emerald-600"
               }`}
             >
               Projects
+
               <ChevronDown
                 className={`h-4 w-4 transition-transform duration-300 ${
                   projectsOpen ? "rotate-180" : ""
@@ -109,7 +149,7 @@ export default function Navigation() {
             </button>
 
             <div
-              className={`absolute left-1/2 top-[calc(100%+8px)] w-80 -translate-x-1/2 origin-top rounded-2xl border border-gray-100 bg-white p-3 shadow-xl transition-all duration-300 ${
+              className={`absolute left-1/2 top-[calc(100%+8px)] w-[min(20rem,90vw)] -translate-x-1/2 origin-top rounded-2xl border border-gray-100 bg-white p-3 shadow-xl transition-all duration-300 ${
                 projectsOpen
                   ? "visible translate-y-0 scale-100 opacity-100"
                   : "invisible -translate-y-2 scale-95 opacity-0"
@@ -119,8 +159,9 @@ export default function Navigation() {
                 <span className="font-['Poppins',sans-serif] text-sm font-semibold text-gray-900">
                   Our Projects
                 </span>
-                <p className="font-['Inter',sans-serif] mt-1 text-sm text-gray-500">
-                  Explore our premium projects across Coimbatore & Erode
+
+                <p className="mt-1 font-['Montserrat',sans-serif] text-sm leading-relaxed text-gray-500">
+                  Explore our premium projects across Coimbatore &amp; Erode
                 </p>
               </div>
 
@@ -129,6 +170,7 @@ export default function Navigation() {
                   <NavLink
                     key={project.name}
                     to={project.path}
+                    onClick={() => setProjectsOpen(false)}
                     className={({ isActive }) =>
                       `group flex items-center justify-between rounded-xl px-3 py-3 transition-all duration-200 ${
                         isActive
@@ -137,9 +179,10 @@ export default function Navigation() {
                       }`
                     }
                   >
-                    <span className="font-['Inter',sans-serif] text-sm font-medium">
+                    <span className="font-['Montserrat',sans-serif] text-sm font-medium">
                       {project.name}
                     </span>
+
                     <ExternalLink className="h-4 w-4 opacity-0 transition-all group-hover:opacity-100" />
                   </NavLink>
                 ))}
@@ -148,67 +191,77 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Enquiry CTA Button */}
-        <div className="hidden lg:block flex-shrink-0">
+        {/* Desktop enquiry button */}
+        <div className="hidden shrink-0 lg:block">
           <button
             type="button"
             onClick={() => scrollToSection("contact")}
-            className="font-['Inter',sans-serif] inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-6 py-3 text-base font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 hover:shadow-md active:scale-95"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 font-['Montserrat',sans-serif] text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-emerald-800 hover:shadow-md active:scale-95 xl:px-6 xl:text-base"
           >
             Enquiry
-            <Mail className="h-5 w-5" />
+            <Mail className="h-4 w-4 xl:h-5 xl:w-5" />
           </button>
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile menu toggle */}
         <button
           type="button"
-          className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-50 text-gray-700 transition-colors hover:bg-gray-100 lg:hidden flex-shrink-0"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-50 text-gray-700 transition-colors hover:bg-gray-100 sm:h-12 sm:w-12 lg:hidden"
           onClick={() => setIsOpen((prev) => !prev)}
-          aria-label="Toggle navigation menu"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isOpen}
         >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isOpen ? (
+            <X className="h-5 w-5 sm:h-6 sm:w-6" />
+          ) : (
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+          )}
         </button>
       </nav>
 
-      {/* Mobile Dropdown Menu - Full Width */}
+      {/* Mobile dropdown menu */}
       <div
         className={`overflow-hidden bg-white transition-all duration-300 lg:hidden ${
-          isOpen ? "max-h-[900px] border-t border-gray-100 opacity-100" : "max-h-0 opacity-0"
+          isOpen
+            ? "max-h-[900px] border-t border-gray-100 opacity-100"
+            : "max-h-0 opacity-0"
         }`}
       >
-        <div className="w-full px-5 py-6 sm:px-8">
+        <div className="w-full px-4 py-4 min-[420px]:px-5 sm:px-8 sm:py-6">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
+
               return (
                 <NavLink
                   key={link.name}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) =>
-                    `font-['Inter',sans-serif] flex items-center gap-3 rounded-xl px-4 py-3.5 text-lg font-medium transition-all ${
+                    `flex items-center gap-3 rounded-xl px-4 py-3 font-['Montserrat',sans-serif] text-sm font-medium transition-all sm:py-3.5 sm:text-base ${
                       isActive
                         ? "bg-emerald-50 text-emerald-700"
                         : "text-gray-700 hover:bg-gray-50"
                     }`
                   }
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5 shrink-0" />
                   {link.name}
                 </NavLink>
               );
             })}
           </div>
 
-          {/* Mobile Projects Dropdown */}
-          <div className="my-6 border-t border-gray-100 pt-6">
+          {/* Mobile projects dropdown */}
+          <div className="my-4 border-t border-gray-100 pt-4 sm:my-6 sm:pt-6">
             <button
               type="button"
               onClick={() => setMobileProjectsOpen((prev) => !prev)}
-              className="flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-lg font-medium text-gray-700 transition-all hover:bg-gray-50"
+              aria-expanded={mobileProjectsOpen}
+              className="flex w-full items-center justify-between rounded-xl px-4 py-3 font-['Montserrat',sans-serif] text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 sm:py-3.5 sm:text-base"
             >
               <span>Projects</span>
+
               <ChevronDown
                 className={`h-5 w-5 transition-transform duration-300 ${
                   mobileProjectsOpen ? "rotate-180" : ""
@@ -218,17 +271,22 @@ export default function Navigation() {
 
             <div
               className={`overflow-hidden transition-all duration-300 ${
-                mobileProjectsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                mobileProjectsOpen
+                  ? "max-h-96 opacity-100"
+                  : "max-h-0 opacity-0"
               }`}
             >
-              <div className="mt-3 flex flex-col gap-2 pl-4">
+              <div className="mt-2 flex flex-col gap-2 pl-4">
                 {projectItems.map((project) => (
                   <NavLink
                     key={project.name}
                     to={project.path}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                      setIsOpen(false);
+                      setMobileProjectsOpen(false);
+                    }}
                     className={({ isActive }) =>
-                      `font-['Inter',sans-serif] rounded-xl px-4 py-3 text-base font-medium transition-all ${
+                      `rounded-xl px-4 py-3 font-['Montserrat',sans-serif] text-sm font-medium transition-all sm:text-base ${
                         isActive
                           ? "bg-emerald-50 text-emerald-700"
                           : "text-gray-600 hover:bg-gray-50"
@@ -242,13 +300,11 @@ export default function Navigation() {
             </div>
           </div>
 
+          {/* Mobile enquiry button */}
           <button
             type="button"
-            onClick={() => {
-              scrollToSection("contact");
-              setIsOpen(false);
-            }}
-            className="font-['Inter',sans-serif] mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-4 text-lg font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 active:scale-95"
+            onClick={() => scrollToSection("contact")}
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3.5 font-['Montserrat',sans-serif] text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 active:scale-95 sm:mt-4 sm:px-6 sm:py-4 sm:text-base"
           >
             Enquiry
             <Mail className="h-5 w-5" />

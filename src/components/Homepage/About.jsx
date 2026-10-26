@@ -1,102 +1,147 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Award,
-  Eye,
-  Heart,
-  ArrowRight,
-  Building2,
-  Ruler,
-  CheckCircle2,
-  Leaf,
-  Home,
-  Star,
-  MapPin,
-  Shield,
-  FileCheck,
-  Phone,
-  MessageCircle,
-  UserCheck,
-} from "lucide-react";
-
 import AboutImage from "../../assests/team/herosection/cubehero3.webp";
 
-// =====================================================
-// 3D TILT — wraps any card, tilts it toward the pointer
-// =====================================================
+const coreValues = [
+  {
+    num: "01",
+    title: "Integrity",
+    desc: "Delivering officially approved layouts and maintaining clear legal standards.",
+    keyword: "TRANSPARENCY",
+  },
+  {
+    num: "02",
+    title: "Innovation",
+    desc: "Integrating modern amenities like underground cables and extensive sports facilities.",
+    keyword: "MODERN PLANNING",
+  },
+  {
+    num: "03",
+    title: "Sustainability",
+    desc: "Prioritizing green living with landscaped gardens and rainwater harvesting systems.",
+    keyword: "GREEN LIVING",
+  },
+  {
+    num: "04",
+    title: "Community Focus",
+    desc: "Building gated environments with security and dedicated spaces for families.",
+    keyword: "BETTER LIFESTYLE",
+  },
+];
 
-function Tilt({ children, className = "", max = 10, scale = 1.02, glare = true }) {
-  const ref = useRef(null);
-  const [style, setStyle] = useState({});
-  const [glarePos, setGlarePos] = useState({ x: 50, y: 50, o: 0 });
+const highlights = [
+  {
+    number: "01",
+    title: "Premium Plots",
+    desc: "Residential plots ranging from 1.5 cents up to 2,400 sq.ft.",
+  },
+  {
+    number: "02",
+    title: "Community Scale",
+    desc: "Expansive developments, including the 805-plot Crystal Gateway.",
+  },
+  {
+    number: "03",
+    title: "Strategic Locations",
+    desc: "Developments across Coimbatore areas like Sulur, Annur, and Kovilpalayam.",
+  },
+];
 
-  const handleMove = useCallback(
-    (e) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      const rotateY = (px - 0.5) * max * 2;
-      const rotateX = (0.5 - py) * max * 2;
+const milestones = [
+  {
+    tag: "SULUR",
+    title: "Crystal Gateway",
+    desc: "805 plots with a 3-acre cricket turf and grand clubhouse.",
+    status: "Flagship Development",
+  },
+  {
+    tag: "PONNIGOUNDAPUDUR",
+    title: "Fairland",
+    desc: "Gated community with an indoor shuttle court and commercial complex.",
+    status: "Residential Community",
+  },
+  {
+    tag: "ANNUR",
+    title: "Opal Garden IV",
+    desc: "RERA-registered layout with street lighting and park access.",
+    status: "Registered Layout",
+  },
+  {
+    tag: "KOVILPALAYAM",
+    title: "Crown City",
+    desc: "DTCP-approved layout on Sathy Main Road with 30ft and 40ft roads.",
+    status: "Approved Layout",
+  },
+  {
+    tag: "KARAMADAI ROAD",
+    title: "Silver City",
+    desc: "Residential plots with individual water pipelines, from ₹7.50L.",
+    status: "Plotted Development",
+  },
+  {
+    tag: "PATTANAM",
+    title: "Diamond Avenue",
+    desc: "Upcoming residential plotted development project.",
+    status: "Upcoming Development",
+  },
+];
 
-      setStyle({
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`,
-      });
-      setGlarePos({ x: px * 100, y: py * 100, o: 0.18 });
-    },
-    [max, scale]
-  );
+const legalItems = [
+  {
+    number: "01",
+    title: "RERA Registration",
+    subtitle: "Project registration references",
+    details: [
+      "Crystal Gateway: TN11//Layout/0360/2025",
+      "Opal Garden IV: TNRERA/11/LO/3358/2026",
+      "Fairland: TN/11/Layout/1405/2023",
+    ],
+  },
+  {
+    number: "02",
+    title: "DTCP Approvals",
+    subtitle: "Layout approval references",
+    details: [
+      "Silver City: Layout No. 58/2025",
+      "Crown City: Official Approved Layout",
+      "Fairland: Approved DTCP Layout",
+    ],
+  },
+  {
+    number: "03",
+    title: "Banking Assistance",
+    subtitle: "Financing support",
+    details: [
+      "Loan assistance may be available up to 80%, subject to lender eligibility and approval.",
+      "Confirm title documents, project approvals, and loan eligibility before purchase.",
+    ],
+  },
+];
 
-  const handleLeave = useCallback(() => {
-    setStyle({
-      transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)",
-    });
-    setGlarePos((g) => ({ ...g, o: 0 }));
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      className={`relative transition-transform duration-300 ease-out will-change-transform ${className}`}
-      style={{ ...style, transformStyle: "preserve-3d" }}
-    >
-      {children}
-      {glare && (
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
-          style={{
-            opacity: glarePos.o,
-            background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,0.9), transparent 55%)`,
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-// =====================================================
-// SCROLL REVEAL
-// =====================================================
-
-function useInView(threshold = 0.2) {
+function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const element = ref.current;
+    if (!element) return undefined;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return undefined;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true);
-          observer.unobserve(el);
+          observer.unobserve(element);
         }
       },
       { threshold }
     );
-    observer.observe(el);
+
+    observer.observe(element);
+
     return () => observer.disconnect();
   }, [threshold]);
 
@@ -104,12 +149,13 @@ function useInView(threshold = 0.2) {
 }
 
 function Reveal({ children, className = "", delay = 0 }) {
-  const [ref, inView] = useInView(0.15);
+  const [ref, inView] = useInView();
+
   return (
     <div
       ref={ref}
       className={`transition-all duration-700 ease-out ${
-        inView ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        inView ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
       } ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
@@ -118,103 +164,79 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-// =====================================================
-// ABOUT — Greenfield Housing India
-// =====================================================
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+  light = false,
+}) {
+  return (
+    <div className="mb-6 flex flex-col gap-3 border-b border-slate-200 pb-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-5 sm:pb-6">
+      <div className="min-w-0">
+        <span
+          className={`font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.18em] sm:text-[11px] sm:tracking-[0.2em] ${
+            light ? "text-[#e4c98d]" : "text-[#9b7d43]"
+          }`}
+        >
+          {eyebrow}
+        </span>
+
+        <h2
+          className={`mt-2 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight tracking-[-0.035em] sm:mt-3 sm:text-3xl lg:text-4xl ${
+            light ? "text-white" : "text-slate-900"
+          }`}
+        >
+          {title}
+        </h2>
+      </div>
+
+      {description && (
+        <p
+          className={`max-w-lg font-['Montserrat',sans-serif] text-xs leading-5 sm:text-sm sm:leading-6 ${
+            light ? "text-white/65" : "text-slate-500"
+          }`}
+        >
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function About() {
   const sectionRef = useRef(null);
   const [drift, setDrift] = useState({ x: 0, y: 0 });
 
-  const coreValues = [
-    {
-      icon: Award,
-      title: "Integrity",
-      desc: "Delivering officially approved layouts and maintaining clear legal standards[cite: 6, 8, 10].",
-    },
-    {
-      icon: Eye,
-      title: "Innovation",
-      desc: "Integrating modern amenities like underground cables and extensive sports facilities[cite: 8].",
-    },
-    {
-      icon: Leaf,
-      title: "Sustainability",
-      desc: "Prioritizing green living with landscaped gardens and rainwater harvesting systems[cite: 8, 10].",
-    },
-    {
-      icon: Heart,
-      title: "Community Focus",
-      desc: "Building gated environments with 24/7 security and dedicated spaces for families[cite: 4, 8, 10].",
-    },
-  ];
-
-  const highlights = [
-    {
-      icon: Building2,
-      title: "Premium Plots",
-      desc: "Residential plots ranging from 1.5 cents up to 2,400 sq.ft[cite: 6, 8].",
-    },
-    {
-      icon: Ruler,
-      title: "Massive Scale",
-      desc: "Expansive communities, including the 805-plot Crystal Gateway[cite: 8].",
-    },
-    {
-      icon: Home,
-      title: "Prime Locations",
-      desc: "Located in Coimbatore areas like Sulur, Annur, and Kovilpalayam[cite: 3, 8, 10].",
-    },
-  ];
-
-  const milestones = [
-    {
-      tag: "Sulur",
-      title: "Crystal Gateway",
-      desc: "805 plots with a 3-acre cricket turf and grand clubhouse[cite: 8].",
-    },
-    {
-      tag: "Ponnigoundapudur",
-      title: "Fairland",
-      desc: "Gated community with an indoor shuttle court and commercial complex[cite: 11].",
-    },
-    {
-      tag: "Annur",
-      title: "Opal Garden IV",
-      desc: "RERA-registered layout with street lighting and park access[cite: 3, 4].",
-    },
-    {
-      tag: "Kovilpalayam",
-      title: "Crown City",
-      desc: "DTCP-approved layout on Sathy Main Road with 30ft/40ft roads[cite: 10].",
-    },
-    {
-      tag: "Karamadai Road",
-      title: "Silver City",
-      desc: "Secure plots with individual water pipelines from ₹7.50L[cite: 6].",
-    },
-    {
-      tag: "Pattanam",
-      title: "Diamond Avenue",
-      desc: "Upcoming residential plot project[cite: 1].",
-    },
-  ];
-
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
-  const handleSectionMove = useCallback((e) => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    setDrift({ x: px, y: py });
+  const handleSectionMove = useCallback((event) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const element = sectionRef.current;
+    if (!element) return;
+
+    const rect = element.getBoundingClientRect();
+
+    setDrift({
+      x: (event.clientX - rect.left) / rect.width - 0.5,
+      y: (event.clientY - rect.top) / rect.height - 0.5,
+    });
   }, []);
 
-  const handleSectionLeave = useCallback(() => setDrift({ x: 0, y: 0 }), []);
+  const handleSectionLeave = useCallback(() => {
+    setDrift({ x: 0, y: 0 });
+  }, []);
 
   return (
     <section
@@ -222,526 +244,626 @@ export default function About() {
       ref={sectionRef}
       onMouseMove={handleSectionMove}
       onMouseLeave={handleSectionLeave}
-      className="relative w-full overflow-hidden bg-slate-50 py-10 md:py-20"
-      style={{ perspective: "1800px" }}
+      className="about-section relative w-full overflow-hidden bg-[#f8f8f5] py-9 text-slate-800 antialiased sm:py-12 md:py-16 lg:py-20"
     >
-      {/* Background Decor */}
+      {/* Architectural Background */}
       <div
-        className="pointer-events-none absolute left-0 top-0 h-[250px] w-[250px] rounded-full bg-emerald-200/30 blur-[80px] transition-transform duration-300 ease-out md:h-[400px] md:w-[400px]"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.025]"
         style={{
-          transform: `translate3d(${drift.x * -30}px, ${drift.y * -30}px, 0)`,
-        }}
-      />
-      <div
-        className="pointer-events-none absolute bottom-0 right-0 h-[250px] w-[250px] rounded-full bg-slate-300/40 blur-[100px] transition-transform duration-300 ease-out md:h-[400px] md:w-[400px]"
-        style={{
-          transform: `translate3d(${drift.x * 20}px, ${drift.y * 20}px, 0)`,
+          backgroundImage:
+            "linear-gradient(#052e16 1px, transparent 1px), linear-gradient(90deg, #052e16 1px, transparent 1px)",
+          backgroundSize: "44px 44px",
         }}
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-12 xl:px-16">
-        {/* Header */}
-        <Reveal className="mb-8 grid gap-5 md:mb-12 lg:grid-cols-[1fr_0.8fr] lg:items-end">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-3 py-1.5 shadow-sm md:mb-5 md:px-4 md:py-2">
-              <Home className="h-3.5 w-3.5 text-emerald-600 md:h-4 md:w-4" />
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-700 md:text-xs">
-                About The Developer
-              </span>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-emerald-200/25 blur-[100px] transition-transform duration-500 ease-out sm:h-96 sm:w-96"
+        style={{
+          transform: `translate3d(${drift.x * 18}px, ${drift.y * 18}px, 0)`,
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-3 sm:px-6 md:px-10 lg:px-14 xl:px-20">
+        {/* Company Header */}
+        <Reveal className="border-b border-slate-200/90 pb-7 sm:pb-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+            <div className="max-w-4xl">
+              <div className="inline-flex items-center gap-2 border border-slate-200 bg-white px-2.5 py-2 sm:gap-3 sm:px-3">
+                <span className="h-1.5 w-1.5 bg-[#b79a5b] sm:h-2 sm:w-2" />
+
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-950 sm:text-[11px] sm:tracking-[0.2em]">
+                  About Greenfield Housing India
+                </span>
+              </div>
+
+              <h1 className="mt-4 font-['Poppins',sans-serif] text-[clamp(1.8rem,5vw,3.75rem)] font-semibold leading-[1.15] tracking-[-0.045em] text-slate-900 sm:mt-5">
+                We Build Communities,
+                <span className="block text-emerald-800">
+                  Not Just Layouts.
+                </span>
+              </h1>
+
+              <p className="mt-4 max-w-3xl font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-5 sm:text-sm sm:leading-7">
+                We develop residential plotted communities across the greater
+                Coimbatore region, bringing together thoughtful planning,
+                essential infrastructure, and a commitment to transparent
+                property development.
+              </p>
             </div>
 
-            <h1 className="font-['Poppins',sans-serif] max-w-3xl text-3xl font-black leading-tight tracking-tight text-slate-950 md:text-4xl lg:text-5xl">
-              We Build Communities,
-              <span className="block text-emerald-600">Not Just Layouts.</span>
-            </h1>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:w-[400px] lg:shrink-0">
+              <div className="border border-slate-200 bg-white p-4 sm:p-5">
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-[#9b7d43] sm:text-[10px]">
+                  Regional Presence
+                </span>
 
-            <p className="font-['Inter',sans-serif] mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-600 md:mt-5 md:text-base">
-              We craft premium, RERA-registered residential communities across the greater Coimbatore region[cite: 3, 8, 11].
-            </p>
-          </div>
-
-          <div className="max-w-xl lg:ml-auto">
-            <div className="grid grid-cols-2 gap-2 md:gap-3">
-              <div className="rounded-xl border border-emerald-100 bg-white p-3 shadow-sm md:rounded-2xl md:p-4">
-                <MapPin className="h-4 w-4 text-emerald-600" />
-                <p className="mt-1.5 font-['Poppins',sans-serif] text-xs font-bold text-slate-950 md:mt-2 md:text-sm">
-                  Coimbatore District
+                <p className="mt-2 font-['Poppins',sans-serif] text-lg font-semibold text-slate-900 sm:mt-3 sm:text-xl">
+                  Coimbatore
                 </p>
-                <p className="font-['Inter',sans-serif] text-[10px] font-medium text-slate-500 md:text-xs">
-                  Sulur, Annur, S.S. Kulam[cite: 3, 8, 11]
+
+                <p className="mt-1.5 font-['Montserrat',sans-serif] text-[11px] leading-5 text-slate-500 sm:text-xs sm:leading-6">
+                  Sulur, Annur, S.S. Kulam and Kovilpalayam
                 </p>
               </div>
-              <div className="rounded-xl border border-emerald-100 bg-white p-3 shadow-sm md:rounded-2xl md:p-4">
-                <Shield className="h-4 w-4 text-emerald-600" />
-                <p className="mt-1.5 font-['Poppins',sans-serif] text-xs font-bold text-slate-950 md:mt-2 md:text-sm">
-                  Fully Verified
+
+              <div className="border border-slate-200 bg-white p-4 sm:p-5">
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-[#9b7d43] sm:text-[10px]">
+                  Development Focus
+                </span>
+
+                <p className="mt-2 font-['Poppins',sans-serif] text-lg font-semibold text-slate-900 sm:mt-3 sm:text-xl">
+                  Planned Living
                 </p>
-                <p className="font-['Inter',sans-serif] text-[10px] font-medium text-slate-500 md:text-xs">
-                  DTCP & RERA Approved[cite: 8, 10, 11]
+
+                <p className="mt-1.5 font-['Montserrat',sans-serif] text-[11px] leading-5 text-slate-500 sm:text-xs sm:leading-6">
+                  Residential layouts, infrastructure and community amenities
                 </p>
               </div>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2 md:mt-6 md:gap-3">
-              <button
-                onClick={() => scrollToSection("projects")}
-                className="font-['Inter',sans-serif] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-800 active:scale-95 md:gap-3 md:px-7 md:py-3.5 md:text-base"
-              >
-                Explore Projects
-                <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-              </button>
-              <a
-                href="tel:+917395864774"
-                className="font-['Inter',sans-serif] inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 shadow-sm transition-all hover:border-emerald-300 hover:bg-emerald-50 active:scale-95 md:px-7 md:py-3.5 md:text-base"
-              >
-                <Phone className="h-4 w-4 text-emerald-600" />
-                Call Sales
-              </a>
             </div>
           </div>
         </Reveal>
 
-        {/* Main About Block */}
-        <Reveal
-          delay={100}
-          className="mb-6 grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:mb-10 lg:grid-cols-[0.9fr_1.1fr]"
-        >
-          <Tilt max={6} scale={1.01} className="rounded-none">
-            <div className="relative min-h-[200px] overflow-hidden md:min-h-[350px] lg:min-h-[500px]">
-              <img
-                src={AboutImage}
-                alt="Greenfield Housing India premium communities in Coimbatore"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
+        {/* Company Story */}
+        <Reveal delay={60} className="my-7 sm:my-10 md:my-14">
+          <div className="overflow-hidden border border-slate-200 bg-white">
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+              <div className="relative min-h-[260px] overflow-hidden border-b border-slate-200 bg-slate-100 sm:min-h-[360px] lg:col-span-5 lg:min-h-[560px] lg:border-b-0 lg:border-r">
+                <img
+                  src={AboutImage}
+                  alt="Greenfield Housing India residential communities"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-[1.025]"
+                  loading="lazy"
+                />
 
-              <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-1.5 md:bottom-6 md:left-6 md:right-6 md:gap-2">
-                {["Gated Communities", "Underground Utilities", "Sports Turfs"].map((item) => (
-                  <span
-                    key={item}
-                    className="font-['Poppins',sans-serif] rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-700 shadow-sm backdrop-blur md:px-3 md:py-1.5 md:text-[10px]"
-                    style={{ transform: "translateZ(20px)" }}
-                  >
-                    {item}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071b13]/85 via-transparent to-[#071b13]/10" />
+
+                <div className="absolute left-3 top-3 border border-white/50 bg-white/95 px-2.5 py-2 sm:left-5 sm:top-5 sm:px-3">
+                  <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-slate-900">
+                    Our Approach
                   </span>
-                ))}
+                </div>
+
+                <div className="absolute bottom-5 left-4 right-4 sm:bottom-8 sm:left-8">
+                  <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-[#e4c98d] sm:text-[10px] sm:tracking-[0.2em]">
+                    Planning · Infrastructure · Community
+                  </span>
+
+                  <h2 className="mt-2 max-w-md font-['Poppins',sans-serif] text-2xl font-semibold leading-tight text-white sm:mt-3 sm:text-3xl lg:text-4xl">
+                    A better foundation for everyday living.
+                  </h2>
+                </div>
               </div>
-            </div>
-          </Tilt>
 
-          <div className="flex flex-col justify-center p-4 md:p-8 lg:p-10">
-            <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-              Our Story
-            </span>
+              <div className="flex flex-col justify-center p-4 sm:p-7 md:p-9 lg:col-span-7 lg:p-10 xl:p-12">
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-800 sm:text-xs sm:tracking-[0.2em]">
+                  Our Genesis & Practice
+                </span>
 
-            <h2 className="font-['Poppins',sans-serif] mt-2 max-w-xl text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-              Transforming lands into thriving neighborhoods.
-            </h2>
+                <h2 className="mt-3 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight tracking-[-0.035em] text-slate-900 sm:mt-4 sm:text-3xl lg:text-4xl">
+                  Transforming Open Land into Planned Neighbourhoods.
+                </h2>
 
-            <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-600 md:mt-4 md:text-sm lg:text-base">
-              We develop residential plots with robust infrastructure, including individual water pipelines, tar roads, and government-standard drainage to ensure a comfortable future[cite: 6, 8].
-            </p>
+                <p className="mt-4 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-5 sm:text-sm sm:leading-7">
+                  Our approach to residential development focuses on combining
+                  practical planning with infrastructure designed to support
+                  everyday needs. This includes road networks, individual water
+                  distribution, underground cabling, and stormwater drainage.
+                </p>
 
-            <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-600 md:mt-4 md:text-sm lg:text-base">
-              From the 805-plot <strong>Crystal Gateway</strong> in Sulur[cite: 8] to the secure <strong>Fairland</strong> in Ponnigoundapudur[cite: 11], our layouts blend modern convenience with community living.
-            </p>
+                <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-4 sm:text-sm sm:leading-7">
+                  From the 805-plot Crystal Gateway development in Sulur to the
+                  gated community concept at Fairland in Ponnigoundapudur, our
+                  portfolio reflects a focus on planned spaces, community
+                  amenities, and residential convenience.
+                </p>
 
-            <div className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 md:mt-8 md:gap-4">
-              {highlights.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Tilt key={item.title} max={8}>
-                    <div className="h-full rounded-xl border border-slate-100 bg-slate-50 p-3 transition-colors hover:border-emerald-100 hover:bg-white hover:shadow-md md:p-4">
-                      <div
-                        className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-emerald-600 shadow-sm md:mb-3 md:h-10 md:w-10"
-                        style={{ transform: "translateZ(15px)" }}
-                      >
-                        <Icon className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2.5} />
-                      </div>
-                      <h3 className="font-['Poppins',sans-serif] text-sm font-bold leading-snug text-slate-950 md:text-base">
+                <div className="mt-5 grid grid-cols-1 gap-2.5 sm:mt-7 sm:grid-cols-3 sm:gap-3">
+                  {highlights.map((item) => (
+                    <div
+                      key={item.title}
+                      className="group border border-slate-200 bg-[#fafaf8] p-3.5 transition-colors hover:border-[#b79a5b] hover:bg-white sm:p-4"
+                    >
+                      <span className="font-['Montserrat',sans-serif] text-[9px] font-bold tracking-[0.16em] text-[#9b7d43]">
+                        {item.number}
+                      </span>
+
+                      <h3 className="mt-2 font-['Poppins',sans-serif] text-base font-semibold text-slate-900 sm:mt-3 sm:text-lg">
                         {item.title}
                       </h3>
-                      <p className="font-['Inter',sans-serif] mt-1.5 text-[10px] font-medium leading-relaxed text-slate-500 md:text-xs">
+
+                      <p className="mt-1.5 font-['Montserrat',sans-serif] text-[11px] leading-5 text-slate-500 sm:mt-2 sm:text-xs sm:leading-6">
                         {item.desc}
                       </p>
+
+                      <div className="mt-3 h-px w-7 bg-[#b79a5b] transition-all duration-300 group-hover:w-full sm:mt-4" />
                     </div>
-                  </Tilt>
-                );
-              })}
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 border-t border-slate-200 bg-[#fafaf8] p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-5">
+              <p className="font-['Montserrat',sans-serif] text-xs leading-5 text-slate-600 sm:max-w-xl sm:text-sm sm:leading-6">
+                Arrange a site visit to understand the layout, infrastructure,
+                and available plots.
+              </p>
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => scrollToSection("about-projects")}
+                  className="inline-flex min-h-10 items-center justify-center gap-3 bg-emerald-900 px-4 py-2.5 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#b79a5b] hover:text-slate-950 sm:min-h-11 sm:gap-4 sm:px-5 sm:text-[10px] sm:tracking-[0.14em]"
+                >
+                  <span>Explore Developments</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+
+                <a
+                  href="tel:+917395864774"
+                  className="inline-flex min-h-10 items-center justify-center gap-3 border border-slate-300 bg-white px-4 py-2.5 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-slate-800 transition-colors hover:border-emerald-900 hover:text-emerald-900 sm:min-h-11 sm:px-5 sm:text-[10px] sm:tracking-[0.14em]"
+                >
+                  Call Our Team
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </Reveal>
 
-        {/* Mission + Vision */}
-        <div className="mb-6 grid gap-5 lg:grid-cols-2 md:mb-10 md:gap-6">
-          <Reveal delay={0}>
-            <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-8 lg:p-10">
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                Mission
-              </span>
+        {/* Mission and Vision */}
+        <div className="mb-9 grid grid-cols-1 gap-3 sm:mb-12 sm:gap-5 lg:mb-14 lg:grid-cols-2">
+          <Reveal>
+            <div className="flex h-full flex-col justify-between border border-slate-200 bg-white p-5 sm:p-7 lg:p-9">
+              <div>
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-[#9b7d43] sm:text-[10px] sm:tracking-[0.2em]">
+                  01 / Our Mission
+                </span>
 
-              <h3 className="font-['Poppins',sans-serif] mt-2 max-w-xl text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                Reliable spaces for modern living.
-              </h3>
+                <h3 className="mt-3 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight text-slate-900 sm:mt-5 sm:text-3xl">
+                  Reliable Masterplans Built for Practical Living.
+                </h3>
 
-              <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-600 md:mt-4 md:text-sm lg:text-base">
-                We deliver residential properties designed with high-quality infrastructure, featuring 30ft to 40ft blacktop roads, drainage, and reliable utilities[cite: 6, 8, 10].
-              </p>
-            </article>
+                <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-4 sm:text-sm sm:leading-7">
+                  To develop residential communities with considered
+                  infrastructure, including 30ft to 40ft roads, stormwater
+                  channels, and utility networks that support day-to-day living.
+                </p>
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-4 sm:mt-7 sm:pt-5">
+                <span className="font-['Montserrat',sans-serif] text-[11px] text-slate-500 sm:text-xs">
+                  Infrastructure planning
+                </span>
+
+                <span className="font-['Montserrat',sans-serif] text-[11px] font-bold text-emerald-900 sm:text-xs">
+                  30 FT — 40 FT Roads
+                </span>
+              </div>
+            </div>
           </Reveal>
 
-          <Reveal delay={100}>
-            <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-8 lg:p-10">
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                Vision
-              </span>
+          <Reveal delay={70}>
+            <div className="flex h-full flex-col justify-between border border-slate-200 bg-[#071b13] p-5 text-white sm:p-7 lg:p-9">
+              <div>
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-[#e4c98d] sm:text-[10px] sm:tracking-[0.2em]">
+                  02 / Our Vision
+                </span>
 
-              <h3 className="font-['Poppins',sans-serif] mt-2 max-w-xl text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                Active environments for peace and comfort.
-              </h3>
+                <h3 className="mt-3 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight text-white sm:mt-5 sm:text-3xl">
+                  Vibrant Environments for Well-Being and Growth.
+                </h3>
 
-              <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-600 md:mt-4 md:text-sm lg:text-base">
-                We turn empty lands into vibrant communities by integrating leisure facilities like outdoor gyms, children's parks, and running tracks[cite: 6, 8, 10].
-              </p>
-
-              <div className="mt-4 grid gap-2 md:mt-6 md:gap-3">
-                <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2 md:px-4 md:py-3">
-                  <CheckCircle2
-                    className="h-4 w-4 flex-shrink-0 text-emerald-600 md:h-5 md:w-5"
-                    strokeWidth={2.5}
-                  />
-                  <span className="font-['Inter',sans-serif] text-xs font-semibold text-slate-700 md:text-sm">
-                    Enclosed compound walls and grand entrance arches[cite: 8, 10].
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2 md:px-4 md:py-3">
-                  <CheckCircle2
-                    className="h-4 w-4 flex-shrink-0 text-emerald-600 md:h-5 md:w-5"
-                    strokeWidth={2.5}
-                  />
-                  <span className="font-['Inter',sans-serif] text-xs font-semibold text-slate-700 md:text-sm">
-                    Community halls and shared recreational turfs[cite: 8, 11].
-                  </span>
-                </div>
+                <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-white/70 sm:mt-4 sm:text-sm sm:leading-7">
+                  To shape welcoming residential environments with recreational
+                  areas, cricket turfs, outdoor fitness spaces, and landscaped
+                  gardens that bring people together.
+                </p>
               </div>
-            </article>
+
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-white/15 pt-4 sm:mt-7 sm:pt-5">
+                <span className="font-['Montserrat',sans-serif] text-[11px] text-white/60 sm:text-xs">
+                  Community-led planning
+                </span>
+
+                <span className="font-['Montserrat',sans-serif] text-[11px] font-bold text-[#e4c98d] sm:text-xs">
+                  Spaces to Connect
+                </span>
+              </div>
+            </div>
           </Reveal>
         </div>
 
         {/* Core Values */}
-        <Reveal className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:mb-10 md:p-8 lg:p-10">
-          <div className="mb-6 grid gap-3 lg:grid-cols-[1fr_1fr] lg:items-end md:mb-10 md:gap-6">
-            <div>
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                Our Principles
-              </span>
-              <h3 className="font-['Poppins',sans-serif] mt-1.5 max-w-xl text-2xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                Building Blocks of Success.
-              </h3>
-            </div>
-            <p className="font-['Inter',sans-serif] max-w-lg text-xs font-medium leading-relaxed text-slate-600 lg:ml-auto md:text-sm">
-              Safety, Infrastructure & Legal Transparency — laid on a strong foundation of Integrity, Innovation & Excellence.
-            </p>
-          </div>
+        <Reveal className="mb-9 sm:mb-12 lg:mb-14">
+          <div className="border border-slate-200 bg-white p-4 sm:p-7 lg:p-9">
+            <SectionHeading
+              eyebrow="Operating Principles"
+              title="The Values Behind Our Work."
+              description="Legal transparency, infrastructure planning, and community experience are central to our development approach."
+            />
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5 xl:grid-cols-4">
-            {coreValues.map((value) => {
-              const Icon = value.icon;
-              return (
-                <Tilt key={value.title} max={12}>
-                  <article className="group h-full rounded-xl border border-slate-100 bg-slate-50 p-4 shadow-[0_0_0_rgba(0,0,0,0)] transition-colors duration-300 hover:border-emerald-200 hover:bg-white hover:shadow-xl md:p-6">
-                    <div
-                      className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-emerald-600 shadow-sm transition-colors group-hover:border-emerald-600 group-hover:bg-emerald-600 group-hover:text-white md:mb-6 md:h-12 md:w-12"
-                      style={{ transform: "translateZ(20px)" }}
-                    >
-                      <Icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2.5} />
-                    </div>
-                    <h4
-                      className="font-['Poppins',sans-serif] text-base font-bold text-slate-950 md:text-xl"
-                      style={{ transform: "translateZ(10px)" }}
-                    >
-                      {value.title}
-                    </h4>
-                    <p className="font-['Inter',sans-serif] mt-1.5 text-xs font-medium leading-relaxed text-slate-600 md:mt-2 md:text-sm">
-                      {value.desc}
-                    </p>
-                  </article>
-                </Tilt>
-              );
-            })}
-          </div>
-        </Reveal>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
+              {coreValues.map((value) => (
+                <div
+                  key={value.title}
+                  className="group flex h-full flex-col border border-slate-200 bg-[#fafaf8] p-4 transition-colors duration-300 hover:border-[#b79a5b] hover:bg-white sm:p-5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.12em] text-[#9b7d43] sm:text-[10px] sm:tracking-[0.16em]">
+                      {value.keyword}
+                    </span>
 
-        {/* Our Projects / Timeline */}
-        <Reveal className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:mb-10 md:p-8 lg:p-10">
-          <div className="mb-6 md:mb-10">
-            <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-              Our Portfolio
-            </span>
-            <h3 className="font-['Poppins',sans-serif] mt-1.5 max-w-xl text-2xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-              Showcase of Premium Developments.
-            </h3>
-            <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-xs font-medium leading-relaxed text-slate-600 md:text-sm">
-              Discover carefully curated plotted layouts developed across Coimbatore.
-            </p>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 md:gap-4">
-            {milestones.map((milestone, index) => (
-              <Tilt key={index} max={8}>
-                <div className="h-full rounded-xl border border-slate-100 bg-slate-50 p-3 transition-colors hover:border-emerald-200 hover:bg-white hover:shadow-md md:p-4">
-                  <div className="mb-1.5 flex items-center gap-1.5 md:mb-2">
-                    <MapPin className="h-3 w-3 text-emerald-600 md:h-4 md:w-4" />
-                    <span className="font-['Poppins',sans-serif] text-xs font-bold text-emerald-700 md:text-sm">
-                      {milestone.tag}
+                    <span className="font-['Montserrat',sans-serif] text-xs font-medium text-slate-400">
+                      {value.num}
                     </span>
                   </div>
-                  <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                    {milestone.title}
-                  </h4>
-                  <p className="font-['Inter',sans-serif] mt-1 text-[10px] text-slate-600 md:text-xs">
-                    {milestone.desc}
+
+                  <h3 className="mt-4 font-['Poppins',sans-serif] text-xl font-semibold text-slate-900 sm:mt-6 sm:text-2xl">
+                    {value.title}
+                  </h3>
+
+                  <p className="mt-2 flex-1 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-3 sm:text-sm sm:leading-7">
+                    {value.desc}
                   </p>
+
+                  <div className="mt-4 h-px w-8 bg-[#b79a5b] transition-all duration-300 group-hover:w-full sm:mt-5" />
                 </div>
-              </Tilt>
-            ))}
+              ))}
+            </div>
           </div>
         </Reveal>
 
-        {/* Trust Signals Strip */}
-        <Reveal className="mb-6 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 md:mb-10 md:p-8">
-          <div className="grid gap-5 md:grid-cols-3 md:gap-6">
-            <div className="flex items-start gap-3 md:gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm md:h-12 md:w-12">
-                <Shield className="h-5 w-5 md:h-6 md:w-6" />
-              </div>
-              <div>
-                <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                  RERA Registered
-                </h4>
-                <ul className="font-['Inter',sans-serif] mt-1 text-[10px] text-slate-600 list-inside list-disc md:text-xs">
-                  <li>Crystal Gateway: TN11//Layout/0360/2025[cite: 8]</li>
-                  <li>Opal Garden IV: TNRERA/11/LO/3358/2026[cite: 3]</li>
-                  <li>Fairland: TN/11/Layout/1405/2023[cite: 11]</li>
-                </ul>
-              </div>
+        {/* Project Portfolio */}
+        <Reveal className="mb-9 sm:mb-12 lg:mb-14">
+          <div
+            id="about-projects"
+            className="scroll-mt-24 border border-slate-200 bg-white p-4 sm:p-7 lg:p-9"
+          >
+            <SectionHeading
+              eyebrow="Regional Portfolio"
+              title="Our Developments."
+              description="Discover our residential projects across Coimbatore and nearby growth corridors."
+            />
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+              {milestones.map((item, index) => (
+                <div
+                  key={item.title}
+                  className="group border border-slate-200 bg-[#fafaf8] p-4 transition-colors duration-300 hover:border-emerald-900/50 hover:bg-white sm:p-5"
+                >
+                  <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3 sm:pb-4">
+                    <div className="min-w-0">
+                      <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-[#9b7d43] sm:text-[10px] sm:tracking-[0.18em]">
+                        {item.tag}
+                      </span>
+
+                      <h3 className="mt-2 font-['Poppins',sans-serif] text-xl font-semibold text-slate-900 sm:text-2xl">
+                        {item.title}
+                      </h3>
+                    </div>
+
+                    <span className="font-['Montserrat',sans-serif] text-xs font-medium text-slate-300 sm:text-sm">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 min-h-0 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-4 sm:min-h-[60px] sm:text-sm">
+                    {item.desc}
+                  </p>
+
+                  <div className="mt-4 flex items-center justify-between gap-2 sm:mt-5">
+                    <span className="border border-slate-200 bg-white px-2 py-1.5 font-['Montserrat',sans-serif] text-[8px] font-bold uppercase tracking-[0.06em] text-slate-600 sm:px-2.5 sm:py-2 sm:text-[9px] sm:tracking-[0.1em]">
+                      {item.status}
+                    </span>
+
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 font-['Montserrat',sans-serif] text-lg text-emerald-900 transition-transform group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Legal Transparency */}
+        <Reveal className="mb-9 sm:mb-12 lg:mb-14">
+          <div className="border border-slate-200 bg-[#f1f2ec] p-4 sm:p-7 lg:p-9">
+            <div className="mb-6 max-w-3xl sm:mb-8">
+              <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-[#9b7d43] sm:text-[11px] sm:tracking-[0.2em]">
+                Documentation & Due Diligence
+              </span>
+
+              <h2 className="mt-2 font-['Poppins',sans-serif] text-2xl font-semibold text-slate-900 sm:mt-3 sm:text-3xl lg:text-4xl">
+                Transparency at Every Stage.
+              </h2>
+
+              <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-4 sm:text-sm sm:leading-7">
+                Review the applicable registration, layout approval, and
+                financing documentation for the specific property before making
+                a purchase decision.
+              </p>
             </div>
 
-            <div className="flex items-start gap-3 md:gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm md:h-12 md:w-12">
-                <FileCheck className="h-5 w-5 md:h-6 md:w-6" />
-              </div>
-              <div>
-                <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                  DTCP Approved
-                </h4>
-                <ul className="font-['Inter',sans-serif] mt-1 text-[10px] text-slate-600 list-inside list-disc md:text-xs">
-                  <li>Silver City: No. 58/2025[cite: 6]</li>
-                  <li>Crown City: Approved Layout[cite: 10]</li>
-                </ul>
-              </div>
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3">
+              {legalItems.map((item) => (
+                <div
+                  key={item.number}
+                  className="border border-slate-200 bg-white p-4 sm:p-6"
+                >
+                  <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3 sm:pb-4">
+                    <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.12em] text-[#9b7d43] sm:text-[10px] sm:tracking-[0.16em]">
+                      {item.subtitle}
+                    </span>
+
+                    <span className="font-['Montserrat',sans-serif] text-xs text-slate-300 sm:text-sm">
+                      {item.number}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 font-['Poppins',sans-serif] text-xl font-semibold text-slate-900 sm:mt-5 sm:text-2xl">
+                    {item.title}
+                  </h3>
+
+                  <ul className="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
+                    {item.details.map((detail) => (
+                      <li
+                        key={detail}
+                        className="flex gap-2.5 font-['Montserrat',sans-serif] text-xs leading-5 text-slate-600 sm:gap-3 sm:leading-6"
+                      >
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-[#b79a5b]" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
-            <div className="flex items-start gap-3 md:gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm md:h-12 md:w-12">
-                <Star className="h-5 w-5 md:h-6 md:w-6" />
+            <p className="mt-4 font-['Montserrat',sans-serif] text-[10px] leading-5 text-slate-500 sm:mt-5 sm:text-[11px]">
+              Registration numbers and approval details are reproduced from the
+              supplied content and should be independently verified with the
+              relevant authority before publication or purchase.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Developer and Promoter Information */}
+        <div className="mb-9 grid grid-cols-1 gap-3 sm:mb-12 sm:gap-5 lg:mb-14 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <div className="h-full border border-slate-200 bg-white p-4 sm:p-7 lg:p-9">
+              <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-[#9b7d43] sm:text-[11px] sm:tracking-[0.2em]">
+                Corporate Ecosystem
+              </span>
+
+              <h2 className="mt-2 font-['Poppins',sans-serif] text-2xl font-semibold text-slate-900 sm:mt-3 sm:text-3xl">
+                Promoters & Development Partners.
+              </h2>
+
+              <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-slate-600 sm:mt-4 sm:text-sm sm:leading-7">
+                Our project portfolio includes developments associated with the
+                following developer and promoter entities.
+              </p>
+
+              <div className="mt-5 space-y-3 sm:mt-7">
+                <div className="border border-slate-200 bg-[#fafaf8] p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    <div className="min-w-0">
+                      <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-[#9b7d43]">
+                        Developer
+                      </span>
+
+                      <h3 className="mt-2 break-words font-['Poppins',sans-serif] text-lg font-semibold text-slate-900 sm:text-xl">
+                        Greenfield Housing India Pvt. Ltd.
+                      </h3>
+
+                      <p className="mt-2 font-['Montserrat',sans-serif] text-xs leading-5 text-slate-500 sm:leading-6">
+                        Primary developer of Opal Garden and Fairland,
+                        according to the supplied company profile.
+                      </p>
+                    </div>
+
+                    <span className="self-start border border-slate-200 bg-white px-2.5 py-2 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-900 sm:self-center sm:px-3 sm:tracking-[0.14em]">
+                      Developer
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border border-slate-200 bg-[#fafaf8] p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    <div className="min-w-0">
+                      <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-[#9b7d43]">
+                        Promoter
+                      </span>
+
+                      <h3 className="mt-2 font-['Poppins',sans-serif] text-lg font-semibold text-slate-900 sm:text-xl">
+                        Terra Field Realtors
+                      </h3>
+
+                      <p className="mt-2 font-['Montserrat',sans-serif] text-xs leading-5 text-slate-500 sm:leading-6">
+                        Promoter and marketing entity for Crystal Gateway,
+                        according to the supplied company profile.
+                      </p>
+                    </div>
+
+                    <span className="self-start border border-slate-200 bg-white px-2.5 py-2 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-900 sm:self-center sm:px-3 sm:tracking-[0.14em]">
+                      Promoter
+                    </span>
+                  </div>
+                </div>
               </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={70} className="lg:col-span-5">
+            <div className="flex h-full flex-col justify-between bg-[#071b13] p-5 text-white sm:p-7 lg:p-9">
               <div>
-                <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                  Premium Quality
-                </h4>
-                <p className="font-['Inter',sans-serif] mt-1 text-[10px] text-slate-600 md:text-xs">
-                  Verified official project documents for complete legal transparency[cite: 10, 11].
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.16em] text-[#e4c98d] sm:text-[10px] sm:tracking-[0.2em]">
+                  Our Commitment
+                </span>
+
+                <h2 className="mt-3 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight text-white sm:mt-4 sm:text-3xl">
+                  Built for Long-Term Value.
+                </h2>
+
+                <p className="mt-3 font-['Montserrat',sans-serif] text-xs leading-6 text-white/70 sm:mt-4 sm:text-sm sm:leading-7">
+                  We aim to support clients throughout their property journey,
+                  from understanding plot availability and reviewing documents
+                  to coordinating site visits and discussing registration
+                  requirements.
+                </p>
+              </div>
+
+              <div className="mt-6 border-t border-white/15 pt-4 sm:mt-9 sm:pt-5">
+                <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-white/50 sm:text-[10px] sm:tracking-[0.16em]">
+                  Client Advisory Support
+                </span>
+
+                <p className="mt-2 font-['Montserrat',sans-serif] text-sm font-semibold text-[#e4c98d]">
+                  Monday – Saturday
+                </p>
+
+                <p className="mt-1 font-['Montserrat',sans-serif] text-xs text-white/60">
+                  09:00 AM – 07:00 PM
                 </p>
               </div>
             </div>
-          </div>
-        </Reveal>
-
-        {/* Project Developers */}
-        <div className="mb-6 grid gap-5 lg:grid-cols-[1.1fr_0.9fr] md:mb-10 md:gap-6">
-          <Reveal delay={0}>
-            <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-8 lg:p-10">
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                Our Network
-              </span>
-              <h3 className="font-['Poppins',sans-serif] mt-2 max-w-xl text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                The Developers Behind Our Communities.
-              </h3>
-
-              <div className="mt-4 space-y-3 md:mt-6 md:space-y-4">
-                <Tilt max={6}>
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 md:p-4">
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <Building2 className="h-6 w-6 text-emerald-600 md:h-8 md:w-8" />
-                      <div>
-                        <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                          Greenfield Housing India Pvt. Ltd.
-                        </h4>
-                        <p className="font-['Inter',sans-serif] text-[10px] font-medium text-emerald-700 md:text-xs">
-                          Primary Developer of Opal Garden and Fairland[cite: 3, 11]
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Tilt>
-
-                <Tilt max={6}>
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 md:p-4">
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <Building2 className="h-6 w-6 text-emerald-600 md:h-8 md:w-8" />
-                      <div>
-                        <h4 className="font-['Poppins',sans-serif] text-sm font-bold text-slate-950 md:text-base">
-                          Terra Field Realtors
-                        </h4>
-                        <p className="font-['Inter',sans-serif] text-[10px] font-medium text-emerald-700 md:text-xs">
-                          Promoter of Crystal Gateway[cite: 8]
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Tilt>
-              </div>
-            </article>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-8 lg:p-10">
-              <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                Our Promise
-              </span>
-              <h3 className="font-['Poppins',sans-serif] mt-2 text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                "Ready for the Future"
-              </h3>
-              <p className="font-['Inter',sans-serif] mt-3 text-xs font-medium leading-relaxed text-slate-600 md:mt-4 md:text-sm lg:text-base">
-                We create plotted spaces that foster meaningful bonds. Whether through loan assistance up to 80%[cite: 10] or providing legal clarity[cite: 11], we stand by our clients.
-              </p>
-            </article>
           </Reveal>
         </div>
 
-        {/* =====================================================
-            SALES CONTACT 
-        ===================================================== */}
-        <Reveal className="mb-6 md:mb-10">
-          <div className="relative overflow-hidden rounded-2xl border border-emerald-300 bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-900 p-5 text-white shadow-xl md:p-8 lg:p-10">
-            {/* Ambient glow */}
-            <div className="pointer-events-none absolute -right-20 -top-20 h-[200px] w-[200px] rounded-full bg-emerald-400/20 blur-[80px] md:h-[300px] md:w-[300px] md:blur-[100px]" />
-            <div className="pointer-events-none absolute -bottom-20 -left-20 h-[200px] w-[200px] rounded-full bg-green-500/20 blur-[80px] md:h-[300px] md:w-[300px] md:blur-[100px]" />
+        {/* Contact Banner */}
+        <Reveal className="mb-2">
+          <div className="relative overflow-hidden bg-[#071b13] p-5 text-white sm:p-8 lg:p-10">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.06]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+                backgroundSize: "35px 35px",
+              }}
+            />
 
-            <div className="relative grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center md:gap-6">
-              <div>
-                <span className="font-['Poppins',sans-serif] inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-emerald-100 backdrop-blur md:gap-2 md:px-4 md:py-2 md:text-[10px]">
-                  <UserCheck className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                  Sales Enquiry
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-emerald-700/25 blur-[80px] sm:h-72 sm:w-72 sm:blur-[100px]"
+            />
+
+            <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 border border-white/20 bg-white/5 px-2.5 py-2 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.14em] text-[#e4c98d] sm:gap-3 sm:px-3 sm:text-[10px] sm:tracking-[0.18em]">
+                  <span className="h-1.5 w-1.5 bg-[#e4c98d]" />
+                  Direct Consultation
                 </span>
 
-                <h3 className="font-['Poppins',sans-serif] mt-3 text-2xl font-black leading-tight md:mt-4 md:text-3xl lg:text-4xl">
-                  Talk to Our Sales Team
-                </h3>
+                <h2 className="mt-4 font-['Poppins',sans-serif] text-2xl font-semibold leading-tight tracking-[-0.035em] text-white sm:mt-5 sm:text-3xl lg:text-4xl">
+                  Find the Right Plot for Your Future.
+                </h2>
 
-                <p className="font-['Inter',sans-serif] mt-2 max-w-xl text-xs font-medium leading-relaxed text-emerald-100 md:mt-3 md:text-sm">
-                  Reach out for site visits, project details, current pricing, and availability — our team is here to help you find the perfect plot[cite: 5].
+                <p className="mt-3 max-w-2xl font-['Montserrat',sans-serif] text-xs leading-6 text-white/65 sm:mt-4 sm:text-sm sm:leading-7">
+                  Connect with our team for updated availability, current
+                  pricing, project documentation, and guided site visits across
+                  Coimbatore.
                 </p>
 
-                <div className="mt-5 flex flex-wrap gap-4 md:mt-6 md:gap-5">
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-emerald-700 shadow-md md:h-12 md:w-12">
-                      <Phone className="h-4 w-4 md:h-5 md:w-5" />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-200 md:text-[10px]">
-                        Direct Line
-                      </p>
-                      <a
-                        href="tel:+917395864774"
-                        className="font-['Poppins',sans-serif] text-base font-black text-white underline-offset-4 hover:underline md:text-lg"
-                      >
-                        +91 73958 64774
-                      </a>
-                    </div>
+                <div className="mt-5 flex flex-col gap-4 sm:mt-7 sm:flex-row sm:items-center sm:gap-8">
+                  <div>
+                    <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-white/50 sm:text-[10px] sm:tracking-[0.18em]">
+                      Direct Helpline
+                    </span>
+
+                    <a
+                      href="tel:+917395864774"
+                      className="mt-1.5 block font-['Poppins',sans-serif] text-xl font-semibold text-white transition-colors hover:text-[#e4c98d] sm:mt-2 sm:text-2xl"
+                    >
+                      +91 73958 64774
+                    </a>
+                  </div>
+
+                  <div className="hidden h-10 w-px bg-white/20 sm:block" />
+
+                  <div>
+                    <span className="font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.15em] text-white/50 sm:text-[10px] sm:tracking-[0.18em]">
+                      Headquarters
+                    </span>
+
+                    <p className="mt-1.5 font-['Montserrat',sans-serif] text-xs font-semibold text-white sm:mt-2 sm:text-sm">
+                      Kalapatti, Coimbatore
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2.5 lg:flex-col md:gap-3">
+              <div className="flex w-full flex-col gap-2.5 sm:flex-row lg:w-auto lg:min-w-[220px] lg:flex-col">
                 <a
                   href="tel:+917395864774"
-                  className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 font-['Inter',sans-serif] text-xs font-bold text-emerald-800 shadow-md transition-all duration-300 hover:-translate-y-1 hover:bg-emerald-50 md:gap-3 md:px-6 md:py-3.5 md:text-sm"
+                  className="inline-flex min-h-10 items-center justify-center gap-3 bg-[#e4c98d] px-4 py-3 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-[#102117] transition-colors hover:bg-white sm:min-h-12 sm:gap-4 sm:px-6 sm:py-4 sm:text-[10px] sm:tracking-[0.13em]"
                 >
-                  <Phone className="h-4 w-4" />
-                  Call Vetri
+                  <span>Call Representative</span>
+                  <span aria-hidden="true">↗</span>
                 </a>
 
                 <a
                   href="https://wa.me/917395864774?text=Hi%2C%20I%27m%20interested%20in%20your%20residential%20plot%20projects."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-3 font-['Inter',sans-serif] text-xs font-bold text-white backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 md:gap-3 md:px-6 md:py-3.5 md:text-sm"
+                  className="inline-flex min-h-10 items-center justify-center gap-3 border border-white/25 bg-white/5 px-4 py-3 font-['Montserrat',sans-serif] text-[9px] font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-[#e4c98d] hover:bg-white/10 sm:min-h-12 sm:gap-4 sm:px-6 sm:py-4 sm:text-[10px] sm:tracking-[0.13em]"
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  WhatsApp
+                  <span>WhatsApp Enquiry</span>
+                  <span aria-hidden="true">↗</span>
                 </a>
               </div>
             </div>
           </div>
         </Reveal>
-
-        {/* Final CTA */}
-        <Reveal>
-          <Tilt max={4} scale={1.005}>
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-md md:p-8 lg:p-10">
-              <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center md:gap-8">
-                <div>
-                  <span className="font-['Poppins',sans-serif] text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 md:text-xs">
-                    Your foundation awaits
-                  </span>
-                  <h3 className="font-['Poppins',sans-serif] mt-2 max-w-2xl text-2xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl lg:text-4xl">
-                    Ready to find your ideal plot?
-                  </h3>
-                  <p className="font-['Inter',sans-serif] mt-2 max-w-lg text-xs font-medium leading-relaxed text-slate-600 md:mt-3 md:text-sm">
-                    Explore our RERA/DTCP-approved residential plots across Coimbatore. From Crystal Gateway in Sulur to Silver City in Karamadai — find the perfect land to build your family's future[cite: 6, 8].
-                  </p>
-
-                  <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-2 md:mt-5 md:gap-3 md:px-5 md:py-3">
-                    <Phone className="h-4 w-4 text-emerald-600 md:h-5 md:w-5" />
-                    <span className="font-['Inter',sans-serif] text-[10px] font-semibold text-slate-700 md:text-sm">
-                      Speak with our sales team at{" "}
-                      <a
-                        href="tel:+917395864774"
-                        className="text-emerald-700 underline-offset-4 hover:underline font-bold"
-                      >
-                        +91 73958 64774
-                      </a>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2.5 lg:flex-col lg:items-end md:gap-3">
-                  <button
-                    onClick={() => scrollToSection("projects")}
-                    className="font-['Inter',sans-serif] inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3.5 text-xs font-semibold text-white shadow-md transition-all hover:bg-emerald-800 active:scale-95 sm:w-auto md:gap-3 md:rounded-full md:px-8 md:py-4 md:text-base"
-                    style={{ transform: "translateZ(15px)" }}
-                  >
-                    View Our Projects
-                    <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-                  </button>
-
-                  <a
-                    href="tel:+917395864774"
-                    className="font-['Inter',sans-serif] inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 text-xs font-semibold text-slate-800 shadow-sm transition-all hover:border-emerald-300 hover:bg-emerald-50 active:scale-95 sm:w-auto md:gap-3 md:rounded-full md:px-8 md:py-4 md:text-base"
-                  >
-                    <Phone className="h-4 w-4 text-emerald-600 md:h-5 md:w-5" />
-                    Call Sales
-                  </a>
-                </div>
-              </div>
-            </div>
-          </Tilt>
-        </Reveal>
       </div>
+
+      {/* Fonts and Accessibility */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+        .about-section {
+          font-family: 'Montserrat', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .about-section *,
+          .about-section *::before,
+          .about-section *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

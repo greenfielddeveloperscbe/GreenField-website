@@ -1,51 +1,40 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  MapPin,
-  Trees,
-  HeartPulse,
-  Volleyball,
-  Users,
-  Building2,
-  Shield,
-  Home,
-  TrendingUp,
-  FileCheck,
-  Award,
-} from "lucide-react";
+import { Link } from "react-router-dom";
 
-// =====================================================
-// 3D TILT
-// =====================================================
+/* =========================================================
+   GREENFIELD HOUSING INDIA
+   Responsive Project Portfolio
+   Poppins Headings | Montserrat Body
+========================================================= */
 
-function Tilt({ children, className = "", max = 10, scale = 1.02 }) {
+/* -------------------- Tilt Effect -------------------- */
+
+function Tilt({ children, className = "", max = 5, scale = 1.005 }) {
   const ref = useRef(null);
   const [style, setStyle] = useState({});
-  const [glare, setGlare] = useState({ x: 50, y: 50, o: 0 });
 
   const handleMove = useCallback(
-    (e) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
+    (event) => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const element = ref.current;
+      if (!element) return;
+
+      const rect = element.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+
       setStyle({
-        transform: `perspective(1000px) rotateX(${(0.5 - py) * max * 2}deg) rotateY(${
-          (px - 0.5) * max * 2
-        }deg) scale3d(${scale}, ${scale}, ${scale})`,
+        transform: `perspective(1200px) rotateX(${(0.5 - y) * max * 1.5}deg) rotateY(${(x - 0.5) * max * 1.5}deg) scale(${scale})`,
       });
-      setGlare({ x: px * 100, y: py * 100, o: 0.14 });
     },
     [max, scale]
   );
 
   const handleLeave = useCallback(() => {
     setStyle({
-      transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)",
+      transform: "perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)",
     });
-    setGlare((g) => ({ ...g, o: 0 }));
   }, []);
 
   return (
@@ -53,42 +42,43 @@ function Tilt({ children, className = "", max = 10, scale = 1.02 }) {
       ref={ref}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      className={`relative transition-transform duration-300 ease-out will-change-transform ${className}`}
+      className={`relative transition-transform duration-300 ease-out ${className}`}
       style={{ ...style, transformStyle: "preserve-3d" }}
     >
       {children}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
-        style={{
-          opacity: glare.o,
-          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.9), transparent 55%)`,
-        }}
-      />
     </div>
   );
 }
 
-// =====================================================
-// SCROLL REVEAL
-// =====================================================
+/* -------------------- Scroll Reveal -------------------- */
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const element = ref.current;
+    if (!element) return undefined;
+
+    if (
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setInView(true);
+      return undefined;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true);
-          observer.unobserve(el);
+          observer.unobserve(element);
         }
       },
       { threshold }
     );
-    observer.observe(el);
+
+    observer.observe(element);
     return () => observer.disconnect();
   }, [threshold]);
 
@@ -97,11 +87,12 @@ function useInView(threshold = 0.15) {
 
 function Reveal({ children, className = "", delay = 0 }) {
   const [ref, inView] = useInView();
+
   return (
     <div
       ref={ref}
       className={`transition-all duration-700 ease-out ${
-        inView ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        inView ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
       } ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
@@ -110,26 +101,12 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-// =====================================================
-// CONTENT — Greenfield Housing India
-// =====================================================
+/* -------------------- Project Data -------------------- */
 
 const projectFilters = [
-  {
-    name: "Ongoing",
-    href: "/project",
-    icon: Building2,
-  },
-  {
-    name: "Completed",
-    href: "/project",
-    icon: Shield,
-  },
-  {
-    name: "Ready",
-    href: "/project",
-    icon: Home,
-  },
+  { name: "Ongoing", href: "/project", detail: "01" },
+  { name: "Completed", href: "/project", detail: "02" },
+  { name: "Ready", href: "/project", detail: "03" },
 ];
 
 const featuredProjects = [
@@ -137,66 +114,66 @@ const featuredProjects = [
     id: "01",
     name: "Crystal Gateway",
     location: "Sulur, Coimbatore",
-    type: "Plots",
+    type: "Residential Plots",
     tags: ["805 Plots", "Ready"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #065f46 0%, #10b981 48%, #a7f3d0 100%)",
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800",
+    image:
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800",
     meta: ["RERA: TN11//Layout/0360/2025"],
   },
   {
     id: "02",
     name: "Crown City",
     location: "Kovilpalayam",
-    type: "Plots",
+    type: "Plotted Community",
     tags: ["DTCP", "Gated"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #064e3b 0%, #047857 48%, #6ee7b7 100%)",
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800",
+    image:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800",
     meta: ["Loan up to 80%"],
   },
   {
     id: "03",
     name: "Silver City",
     location: "Karamadai Road",
-    type: "Plots",
+    type: "Plotted Development",
     tags: ["From ₹7.50L", "DTCP"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #14532d 0%, #15803d 48%, #bbf7d0 100%)",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800",
+    image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800",
     meta: ["1.5 to 5 cents"],
   },
   {
     id: "04",
     name: "Fairland",
     location: "Ponnigoundapudur",
-    type: "Plots",
+    type: "Premium Plots",
     tags: ["Turf Court", "Commercial"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #064e3b 0%, #059669 48%, #6ee7b7 100%)",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
+    image:
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
     meta: ["TN/11/Layout/1405/2023"],
   },
   {
     id: "05",
     name: "Opal Garden IV",
     location: "Annur Taluk",
-    type: "Plots",
-    tags: ["RERA", "9.75L per cent"],
+    type: "Gated Township",
+    tags: ["RERA", "9.75L / cent"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #052e16 0%, #166534 48%, #86efac 100%)",
-    image: "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&q=80&w=800",
-    meta: ["Gated access"],
+    image:
+      "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&q=80&w=800",
+    meta: ["Gated Access"],
   },
   {
     id: "06",
     name: "Diamond Avenue",
     location: "Pattanam",
-    type: "Plots",
+    type: "Upcoming Layout",
     tags: ["Upcoming", "Pattanam"],
     href: "/project",
-    gradient: "linear-gradient(135deg, #14532d 0%, #16a34a 48%, #86efac 100%)",
-    image: "https://images.unsplash.com/photo-1628611225249-6c11760c6d7a?auto=format&fit=crop&q=80&w=800",
+    image:
+      "https://images.unsplash.com/photo-1628611225249-6c11760c6d7a?auto=format&fit=crop&q=80&w=800",
     meta: ["Details TBA"],
   },
 ];
@@ -207,60 +184,67 @@ const highlightProject = {
   rera: "TN11//Layout/0360/2025",
   approval: "Layout 74/2024",
   totalPlots: "805 plots",
-  plotSizes: "1,200-2,400 sq.ft.",
+  plotSizes: "1,200 - 2,400 sq.ft.",
   href: "/project",
-  image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
+  image:
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
   amenities: [
     "Entrance Arch",
-    "CCTV",
+    "CCTV Surveillance",
     "Tar Roads",
     "EB Cables",
     "Water Connection",
-    "Drainage",
-    "Play Area",
+    "Standard Drainage",
+    "Kids Play Area",
     "Outdoor Gym",
     "Turf Court",
     "Cricket Ground",
     "Running Track",
-    "Clubhouse",
+    "Grand Clubhouse",
     "Mini Theatre",
   ],
   nearby: [
     { name: "L&T Bypass", dist: "2 km" },
-    { name: "KMCH", dist: "3 km" },
-    { name: "RVS Inst.", dist: "4 km" },
+    { name: "KMCH Hospital", dist: "3 km" },
+    { name: "RVS Institute", dist: "4 km" },
     { name: "Airport", dist: "10 km" },
   ],
 };
 
 const communityFeatures = [
-  { icon: Trees, label: "Landscaped gardens" },
-  { icon: HeartPulse, label: "Outdoor gyms" },
-  { icon: Volleyball, label: "Turf courts" },
-  { icon: Users, label: "Community halls" },
-  { icon: Shield, label: "24/7 CCTV" },
-  { icon: Home, label: "Gated developments" },
+  { number: "01", label: "Landscaped gardens" },
+  { number: "02", label: "Outdoor gymnasiums" },
+  { number: "03", label: "All-weather turf courts" },
+  { number: "04", label: "Community halls" },
+  { number: "05", label: "24/7 CCTV surveillance" },
+  { number: "06", label: "Secure gated entries" },
 ];
 
-// =====================================================
-// PROJECTS
-// =====================================================
+/* =========================================================
+   MAIN PROJECTS COMPONENT
+========================================================= */
 
 export default function Projects() {
   const sectionRef = useRef(null);
   const [drift, setDrift] = useState({ x: 0, y: 0 });
 
-  const handleMove = useCallback((e) => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
+  const handleMove = useCallback((event) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const element = sectionRef.current;
+    if (!element) return;
+
+    const rect = element.getBoundingClientRect();
+
     setDrift({
-      x: (e.clientX - rect.left) / rect.width - 0.5,
-      y: (e.clientY - rect.top) / rect.height - 0.5,
+      x: (event.clientX - rect.left) / rect.width - 0.5,
+      y: (event.clientY - rect.top) / rect.height - 0.5,
     });
   }, []);
 
-  const handleLeave = useCallback(() => setDrift({ x: 0, y: 0 }), []);
+  const handleLeave = useCallback(() => {
+    setDrift({ x: 0, y: 0 });
+  }, []);
 
   return (
     <section
@@ -268,305 +252,408 @@ export default function Projects() {
       ref={sectionRef}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      className="relative w-full overflow-hidden bg-emerald-50 py-16 md:py-24"
-      style={{ perspective: "1800px" }}
+      className="projects-section relative w-full overflow-hidden bg-[#f8f8f5] py-10 text-slate-800 antialiased sm:py-16 md:py-20 lg:py-24"
     >
-      {/* Background Gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.07),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(34,197,94,0.06),transparent_40%)]" />
+      {/* Font and responsive motion styles */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+        .projects-section {
+          font-family: 'Montserrat', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+        }
+
+        .projects-section .font-poppins {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .projects-section .font-montserrat {
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        @media (max-width: 639px) {
+          .projects-section .project-tilt {
+            transform: none !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .projects-section *,
+          .projects-section *::before,
+          .projects-section *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      `}</style>
+
+      {/* Subtle architectural grid */}
       <div
-        className="pointer-events-none absolute -left-10 top-10 h-[280px] w-[280px] rounded-full bg-emerald-200/30 blur-[100px] transition-transform duration-300 ease-out"
-        style={{ transform: `translate3d(${drift.x * 30}px, ${drift.y * 30}px, 0)` }}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#052e16 1px, transparent 1px), linear-gradient(90deg, #052e16 1px, transparent 1px)",
+          backgroundSize: "44px 44px",
+        }}
       />
 
-      <div className="relative z-10 w-full px-4 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-        {/* =================================================
-            HEADER
-        ================================================= */}
-        <Reveal className="mb-10 md:mb-14">
-          <span className="font-['Poppins',sans-serif] mb-4 inline-flex rounded-full border border-emerald-100 bg-emerald-50/50 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700 shadow-sm backdrop-blur-sm">
-            Projects
-          </span>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-16 top-16 h-64 w-64 rounded-full bg-emerald-200/25 blur-[90px] transition-transform duration-500 ease-out sm:-left-10 sm:top-20 sm:h-96 sm:w-96 sm:blur-[120px]"
+        style={{
+          transform: `translate3d(${drift.x * 24}px, ${drift.y * 24}px, 0)`,
+        }}
+      />
 
-          <h2 className="font-['Poppins',sans-serif] max-w-3xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
-            Thoughtfully designed communities.
-          </h2>
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20">
+        {/* Portfolio header */}
+        <Reveal className="border-b border-slate-200/90 pb-7 sm:pb-10">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-8">
+            <div className="min-w-0">
+              <div className="inline-flex items-center gap-2.5 border border-slate-200 bg-white px-3 py-2 sm:gap-3">
+                <span className="h-2 w-2 shrink-0 bg-[#b79a5b]" />
+                <span className="font-montserrat text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-900 sm:text-xs sm:tracking-[0.22em]">
+                  Project Portfolio
+                </span>
+              </div>
 
-          <p className="font-['Inter',sans-serif] mt-4 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
-            Explore premium RERA and DTCP-approved plotted developments across Coimbatore.
-          </p>
+              <h2 className="font-poppins mt-4 max-w-4xl text-[30px] font-medium leading-[1.15] tracking-[-0.04em] text-slate-900 sm:mt-5 sm:text-4xl lg:text-5xl">
+                Thoughtfully Designed
+                <span className="block italic text-emerald-800">
+                  Communities.
+                </span>
+              </h2>
 
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            {projectFilters.map((item) => {
-              const Icon = item.icon;
-              return (
-                <a
+              <p className="font-montserrat mt-3 max-w-3xl text-xs leading-6 text-slate-600 sm:mt-4 sm:text-sm sm:leading-7 md:text-base">
+                Explore premium RERA and DTCP-approved plotted developments
+                across Coimbatore.
+              </p>
+            </div>
+
+            {/* Project category links */}
+            <div className="flex flex-wrap gap-2">
+              {projectFilters.map((item) => (
+                <Link
                   key={item.name}
-                  href={item.href}
-                  className="group inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 font-['Inter',sans-serif] text-xs font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-300 hover:text-emerald-700"
+                  to={item.href}
+                  className="group inline-flex min-h-10 items-center gap-2 border border-slate-200 bg-white px-3 py-2.5 font-montserrat text-[11px] font-semibold text-slate-800 transition-colors hover:border-emerald-800 hover:text-emerald-800 sm:gap-3 sm:px-4 sm:py-3 sm:text-xs"
                 >
-                  <Icon className="h-3.5 w-3.5 text-emerald-600" />
-                  {item.name}
-                </a>
-              );
-            })}
+                  <span className="font-montserrat text-[9px] tracking-widest text-[#b79a5b] sm:text-[10px]">
+                    {item.detail}
+                  </span>
+                  <span>{item.name}</span>
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </Reveal>
 
-        {/* =================================================
-            FEATURED PROJECTS
-        ================================================= */}
-        <Reveal delay={100} className="mb-10 grid gap-6 lg:grid-cols-[1.5fr_1fr] lg:items-end">
+        {/* Signature project listing */}
+        <Reveal
+          delay={100}
+          className="mb-5 mt-8 flex flex-col justify-between gap-3 border-b border-slate-200/90 pb-4 sm:mb-8 sm:mt-14 sm:flex-row sm:items-end sm:gap-4"
+        >
           <div>
-            <h3 className="font-['Poppins',sans-serif] text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
+            <h3 className="font-poppins text-xl font-medium text-slate-900 sm:text-3xl">
               Signature Plotted Homes
             </h3>
-            <p className="font-['Inter',sans-serif] mt-3 max-w-xl text-sm font-medium leading-relaxed text-slate-600">
-              Discover carefully crafted developments in prime locations.
+            <p className="font-montserrat mt-1.5 text-xs leading-5 text-slate-500 sm:mt-2 sm:text-sm">
+              Approved layouts built with sustainable infrastructure.
             </p>
           </div>
-          <div className="lg:justify-self-end">
-            <a
-              href="/allprojects"
-              className="group inline-flex items-center gap-2 rounded-full bg-slate-950 px-6 py-3 font-['Inter',sans-serif] text-sm font-bold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-emerald-600"
+
+          <Link
+            to="/allprojects"
+            className="group inline-flex items-center gap-3 self-start font-montserrat text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-900 transition-colors hover:text-[#9a7c3e] sm:self-auto sm:text-xs sm:tracking-[0.12em]"
+          >
+            <span>View All Projects</span>
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-200 group-hover:translate-x-1"
             >
-              View All
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
-            </a>
-          </div>
+              →
+            </span>
+          </Link>
         </Reveal>
 
-        <div className="mb-16 grid gap-5 md:grid-cols-2 xl:grid-cols-3 md:mb-24">
+        {/* Responsive project cards */}
+        <div className="mb-12 grid grid-cols-1 gap-4 sm:mb-16 sm:grid-cols-2 sm:gap-5 lg:mb-20 lg:grid-cols-3 2xl:grid-cols-6">
           {featuredProjects.map((project, index) => (
-            <Reveal key={project.id} delay={index * 50}>
-              <Tilt max={7}>
-                <a
-                  href={project.href}
-                  className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-emerald-100 bg-white shadow-sm transition-all duration-500 hover:border-emerald-300 hover:shadow-xl"
+            <Reveal key={project.id} delay={index * 40} className="h-full">
+              <Tilt className="project-tilt h-full">
+                <Link
+                  to={project.href}
+                  className="group flex h-full flex-col overflow-hidden border border-slate-200/90 bg-white transition-all duration-300 hover:border-emerald-800/40 hover:shadow-[0_18px_45px_rgba(15,23,42,0.09)]"
                 >
-                  <div
-                    className="relative flex h-40 items-end overflow-hidden p-6 sm:h-48"
-                    style={{ transform: "translateZ(15px)", background: project.gradient }}
-                  >
-                    {project.image && (
-                      <img 
-                        src={project.image} 
-                        alt={project.name} 
-                        className="absolute inset-0 h-full w-full object-cover mix-blend-overlay opacity-50 transition-transform duration-700 group-hover:scale-110" 
-                      />
-                    )}
-                    
-                    <div className="absolute inset-0 bg-black/10" />
-                    <span className="font-['Inter',sans-serif] absolute left-5 top-5 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-emerald-800 shadow-sm backdrop-blur">
-                      {project.type}
-                    </span>
-                    <span className="font-['Poppins',sans-serif] absolute right-5 top-4 text-4xl font-black text-white/20">
+                  {/* Project image */}
+                  <div className="relative h-48 w-full overflow-hidden border-b border-slate-100 bg-slate-100 sm:h-52 lg:h-48">
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-slate-950/10" />
+
+                    <span className="font-poppins absolute right-3 top-2 text-2xl font-medium tracking-tight text-white/65 sm:right-4 sm:top-3 sm:text-3xl">
                       {project.id}
                     </span>
-                    <div className="relative flex items-center gap-1.5 text-white/90">
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span className="font-['Inter',sans-serif] text-xs font-semibold">
+
+                    <span className="font-montserrat absolute left-2.5 top-2.5 max-w-[85%] truncate border border-white/60 bg-white/95 px-2 py-1.5 text-[8px] font-bold uppercase tracking-[0.08em] text-slate-900 sm:left-3 sm:top-3 sm:px-2.5 sm:text-[9px] sm:tracking-[0.12em]">
+                      {project.type}
+                    </span>
+
+                    <div className="absolute bottom-3 left-3 flex items-center gap-2 text-white sm:left-3.5">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#e4c98d]" />
+                      <span className="font-montserrat text-[10px] font-medium sm:text-xs">
                         {project.location}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-grow flex-col p-6" style={{ transform: "translateZ(10px)" }}>
+                  {/* Project details */}
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
                     <div className="mb-3 flex flex-wrap gap-1.5">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="font-['Inter',sans-serif] rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700"
+                          className="font-montserrat border border-slate-200 bg-slate-50 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.08em] text-slate-700 sm:text-[9px] sm:tracking-[0.1em]"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <h4 className="font-['Poppins',sans-serif] text-xl font-bold tracking-tight text-slate-950 md:text-2xl">
+
+                    <h4 className="font-poppins text-lg font-medium leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-emerald-800 sm:text-xl">
                       {project.name}
                     </h4>
+
                     {project.meta && (
-                      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium text-slate-500">
-                        {project.meta.map((m) => (
-                          <span key={m} className="inline-flex items-center gap-1">
-                            <span className="h-1 w-1 rounded-full bg-emerald-500" />
-                            {m}
-                          </span>
+                      <div className="font-montserrat mt-2 flex flex-wrap gap-2 text-[10px] leading-5 text-slate-500 sm:mt-3 sm:text-[11px]">
+                        {project.meta.map((meta) => (
+                          <span key={meta}>{meta}</span>
                         ))}
                       </div>
                     )}
-                    <div className="mt-auto flex items-center gap-1.5 pt-6 font-['Inter',sans-serif] text-sm font-bold text-emerald-700">
-                      Explore
-                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+
+                    <div className="font-montserrat mt-auto flex items-center justify-between gap-2 border-t border-slate-100 pt-4 text-[9px] font-bold uppercase tracking-[0.08em] text-emerald-900 sm:pt-5 sm:text-[10px] sm:tracking-[0.12em]">
+                      <span>Explore Layout</span>
+                      <span
+                        aria-hidden="true"
+                        className="text-base transition-transform duration-200 group-hover:translate-x-1"
+                      >
+                        →
+                      </span>
                     </div>
                   </div>
-                </a>
+                </Link>
               </Tilt>
             </Reveal>
           ))}
         </div>
 
-        {/* =================================================
-            HIGHLIGHT — Crystal Gateway Spotlight
-        ================================================= */}
-        <Reveal className="mb-16 md:mb-24">
-          <div className="relative overflow-hidden rounded-[2rem] border border-emerald-200 bg-white shadow-xl">
-            {highlightProject.image && (
-              <img 
-                src={highlightProject.image} 
-                alt="Highlight Project Background" 
-                className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.04]" 
-              />
-            )}
-            
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.10),transparent_45%)]" />
+        {/* Featured project spotlight */}
+        <Reveal className="mb-12 sm:mb-16 lg:mb-20">
+          <div className="overflow-hidden border border-slate-200 bg-white">
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+              <div className="p-4 sm:p-8 lg:col-span-7 lg:p-12">
+                <div className="inline-flex items-center gap-2.5 border-b border-[#e7dcc2] pb-2.5 sm:gap-3 sm:pb-3">
+                  <span className="h-2 w-2 bg-[#b79a5b]" />
+                  <span className="font-montserrat text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-900 sm:text-[10px] sm:tracking-[0.2em]">
+                    Flagship Project
+                  </span>
+                </div>
 
-            <div className="relative grid gap-8 p-6 md:p-10 lg:grid-cols-[1fr_0.9fr] lg:p-12">
-              <div>
-                <span className="font-['Poppins',sans-serif] inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">
-                  <Award className="h-3 w-3" />
-                  Featured
-                </span>
-
-                <h3 className="font-['Poppins',sans-serif] mt-4 text-3xl font-black leading-tight tracking-tight text-slate-950 md:text-4xl">
+                <h3 className="font-poppins mt-4 text-2xl font-medium tracking-[-0.035em] text-slate-900 sm:mt-5 sm:text-4xl">
                   {highlightProject.name}
                 </h3>
 
-                <p className="font-['Inter',sans-serif] mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-600 md:text-base">
-                  <MapPin className="h-4 w-4 text-emerald-600" />
+                <p className="font-montserrat mt-3 flex items-center gap-2 text-xs text-slate-600 sm:text-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#b79a5b]" />
                   {highlightProject.location}
                 </p>
 
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                    <div className="flex items-center gap-1.5 text-emerald-600">
-                      <FileCheck className="h-3 w-3" />
-                      <span className="text-[9px] font-bold uppercase tracking-wider">RERA</span>
+                {/* Project specifications */}
+                <div className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-7 sm:grid-cols-3 sm:gap-3">
+                  {[
+                    {
+                      label: "Approval",
+                      value: highlightProject.approval,
+                    },
+                    {
+                      label: "Total Capacity",
+                      value: highlightProject.totalPlots,
+                    },
+                    {
+                      label: "Unit Sizes",
+                      value: highlightProject.plotSizes,
+                    },
+                  ].map((spec) => (
+                    <div
+                      key={spec.label}
+                      className="min-w-0 border border-slate-200 bg-[#fafaf8] p-3 sm:p-4"
+                    >
+                      <span className="font-montserrat text-[8px] font-bold uppercase tracking-[0.1em] text-slate-500 sm:text-[9px] sm:tracking-[0.14em]">
+                        {spec.label}
+                      </span>
+                      <p className="font-montserrat mt-1.5 break-words text-[10px] font-semibold leading-5 text-slate-900 sm:mt-2 sm:text-xs">
+                        {spec.value}
+                      </p>
                     </div>
-                    <p className="mt-1 font-['Poppins',sans-serif] text-xs font-bold text-slate-950">
-                      {highlightProject.rera}
-                    </p>
-                  </div>
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                    <div className="flex items-center gap-1.5 text-emerald-600">
-                      <Home className="h-3 w-3" />
-                      <span className="text-[9px] font-bold uppercase tracking-wider">Plots</span>
-                    </div>
-                    <p className="mt-1 font-['Poppins',sans-serif] text-xs font-bold text-slate-950">
-                      {highlightProject.totalPlots}
-                    </p>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="mt-6">
-                  <p className="font-['Poppins',sans-serif] text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Amenities
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {highlightProject.amenities.map((a) => (
+                {/* Amenity list */}
+                <div className="mt-5 sm:mt-7">
+                  <span className="font-montserrat text-[9px] font-bold uppercase tracking-[0.12em] text-slate-700 sm:text-[10px] sm:tracking-[0.15em]">
+                    Included Community Amenities
+                  </span>
+
+                  <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2">
+                    {highlightProject.amenities.map((item) => (
                       <span
-                        key={a}
-                        className="rounded-full border border-emerald-100 bg-emerald-50/60 px-2.5 py-1 font-['Inter',sans-serif] text-[10px] font-semibold text-emerald-800"
+                        key={item}
+                        className="font-montserrat border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] text-slate-600 sm:px-3 sm:py-2 sm:text-[11px]"
                       >
-                        {a}
+                        {item}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div className="mt-6 flex flex-wrap gap-2">
-                  <a
-                    href={highlightProject.href}
-                    className="group inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 font-['Inter',sans-serif] text-sm font-bold text-white shadow-md transition-all hover:bg-emerald-700"
+                <div className="mt-6 sm:mt-8">
+                  <Link
+                    to={highlightProject.href}
+                    className="group inline-flex min-h-11 w-full items-center justify-center gap-4 bg-emerald-900 px-4 py-3 font-montserrat text-[9px] font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#b79a5b] hover:text-slate-950 sm:min-h-12 sm:w-auto sm:justify-start sm:gap-5 sm:px-6 sm:py-4 sm:text-[10px] sm:tracking-[0.14em]"
                   >
-                    View Project
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </a>
+                    <span>View Project Details</span>
+                    <span
+                      aria-hidden="true"
+                      className="text-base transition-transform group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </Link>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-6">
-                <div className="flex items-center gap-1.5">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  <p className="font-['Poppins',sans-serif] text-xs font-bold uppercase tracking-wider text-emerald-800">
-                    Location
+              {/* Location and connectivity */}
+              <div className="relative min-h-[320px] overflow-hidden bg-slate-100 sm:min-h-[400px] lg:col-span-5">
+                <img
+                  src={highlightProject.image}
+                  alt={`${highlightProject.name} residential development`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071b13]/95 via-[#071b13]/65 to-[#071b13]/10" />
+
+                <div className="relative flex h-full min-h-[320px] flex-col justify-end p-4 sm:min-h-[400px] sm:p-8">
+                  <span className="font-montserrat mb-3 text-[9px] font-bold uppercase tracking-[0.16em] text-[#e4c98d] sm:mb-4 sm:text-[10px] sm:tracking-[0.2em]">
+                    Strategic Proximity
+                  </span>
+
+                  <h4 className="font-poppins mb-4 text-xl font-medium text-white sm:mb-5 sm:text-3xl">
+                    Well-connected living.
+                  </h4>
+
+                  <div className="space-y-2">
+                    {highlightProject.nearby.map((place) => (
+                      <div
+                        key={place.name}
+                        className="flex items-center justify-between gap-3 border border-white/15 bg-black/20 px-3 py-2.5 backdrop-blur-sm sm:gap-4 sm:px-4 sm:py-3"
+                      >
+                        <span className="font-montserrat text-[11px] text-white/85 sm:text-xs">
+                          {place.name}
+                        </span>
+                        <span className="font-montserrat shrink-0 text-[11px] font-semibold text-[#e4c98d] sm:text-xs">
+                          {place.dist}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="font-montserrat mt-3 border-l-2 border-[#b79a5b] pl-3 text-[10px] leading-5 text-white/80 sm:mt-4 sm:text-xs sm:leading-6">
+                    Approval reference: {highlightProject.rera}. Verify current
+                    approval and project details before purchase.
                   </p>
-                </div>
-                <h4 className="font-['Poppins',sans-serif] mt-2 text-lg font-black text-slate-950 md:text-xl">
-                  Connectivity
-                </h4>
-                <div className="mt-4 space-y-2">
-                  {highlightProject.nearby.map((place) => (
-                    <div
-                      key={place.name}
-                      className="flex items-center justify-between rounded-lg border border-white bg-white px-3 py-2 shadow-sm"
-                    >
-                      <span className="font-['Inter',sans-serif] text-xs font-semibold text-slate-700">
-                        {place.name}
-                      </span>
-                      <span className="font-['Poppins',sans-serif] text-xs font-bold text-emerald-700">
-                        {place.dist}
-                      </span>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
           </div>
         </Reveal>
 
-        {/* =================================================
-            COMMUNITY
-        ================================================= */}
+        {/* Community amenities panel */}
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2rem] border border-slate-900 bg-slate-950 p-6 text-white shadow-xl md:p-12">
+          <div className="relative overflow-hidden bg-[#071b13] p-4 text-white sm:p-8 lg:p-12">
             <div
-              className="pointer-events-none absolute -top-16 right-0 h-[200px] w-[200px] rounded-full bg-emerald-500/20 blur-[80px] transition-transform duration-300 ease-out"
-              style={{ transform: `translate3d(${drift.x * 15}px, ${drift.y * 15}px, 0)` }}
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-700/20 blur-[80px] sm:h-72 sm:w-72 sm:blur-[100px]"
             />
 
-            <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
-              <div>
-                <span className="font-['Poppins',sans-serif] inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
-                  <Building2 className="h-3.5 w-3.5" />
-                  Community
+            <div className="relative grid grid-cols-1 items-center gap-7 sm:gap-10 lg:grid-cols-12">
+              <div className="lg:col-span-5">
+                <span className="font-montserrat text-[9px] font-bold uppercase tracking-[0.18em] text-[#e4c98d] sm:text-[10px] sm:tracking-[0.22em]">
+                  Sustainable Planning
                 </span>
 
-                <h3 className="font-['Poppins',sans-serif] mt-4 text-3xl font-black leading-tight tracking-tight md:text-4xl">
-                  Designed for more than just living.
+                <h3 className="font-poppins mt-3 text-2xl font-medium leading-tight tracking-[-0.03em] text-white sm:mt-4 sm:text-4xl">
+                  Designed for More Than Just Living.
                 </h3>
 
-                <p className="font-['Inter',sans-serif] mt-4 text-sm font-medium leading-relaxed text-white/70 md:text-base">
-                  Every community is thoughtfully designed with green spaces, wellness zones, and smart layout features to help families thrive.
+                <p className="font-montserrat mt-3 max-w-lg text-xs leading-6 text-white/70 sm:mt-4 sm:text-sm sm:leading-7">
+                  Every community is thoughtfully designed with green spaces,
+                  wellness zones, and practical layout features to support
+                  everyday living.
                 </p>
 
-                <a
-                  href="/community"
-                  className="group mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-['Inter',sans-serif] text-sm font-bold text-slate-950 shadow-lg transition-all hover:bg-emerald-50"
-                >
-                  Experience More
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </a>
+                <div className="mt-5 sm:mt-7">
+                  <Link
+                    to="/community"
+                    className="group inline-flex min-h-11 w-full items-center justify-center gap-4 bg-[#e4c98d] px-4 py-3 font-montserrat text-[9px] font-bold uppercase tracking-[0.1em] text-[#102117] transition-colors hover:bg-white sm:min-h-12 sm:w-auto sm:justify-start sm:gap-5 sm:px-6 sm:py-4 sm:text-[10px] sm:tracking-[0.14em]"
+                  >
+                    <span>Explore Community</span>
+                    <span
+                      aria-hidden="true"
+                      className="text-base transition-transform group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </Link>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-2">
-                {communityFeatures.map((feature) => {
-                  const Icon = feature.icon;
-                  return (
-                    <Tilt key={feature.label} max={10}>
-                      <div className="flex h-full flex-col items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-md transition-colors hover:border-emerald-400/40 hover:bg-white/10">
-                        <div
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-emerald-300"
-                          style={{ transform: "translateZ(10px)" }}
-                        >
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <span className="font-['Inter',sans-serif] text-xs font-semibold leading-snug text-white/90">
-                          {feature.label}
-                        </span>
-                      </div>
-                    </Tilt>
-                  );
-                })}
+              {/* Amenity tiles */}
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:col-span-7">
+                {communityFeatures.map((item) => (
+                  <div
+                    key={item.label}
+                    className="group min-h-[105px] border border-white/10 bg-white/[0.035] p-3 transition-colors hover:border-[#b79a5b]/70 hover:bg-white/[0.07] sm:min-h-[118px] sm:p-5"
+                  >
+                    <span className="font-montserrat text-[9px] font-semibold tracking-[0.14em] text-[#b79a5b] sm:text-[10px] sm:tracking-[0.18em]">
+                      {item.number}
+                    </span>
+
+                    <span className="font-poppins mt-3 block text-xs font-medium leading-5 text-white/90 sm:mt-5 sm:text-sm sm:leading-6">
+                      {item.label}
+                    </span>
+
+                    <div className="mt-3 h-px w-7 bg-white/20 transition-all duration-300 group-hover:w-12 group-hover:bg-[#b79a5b] sm:mt-4 sm:w-8 sm:group-hover:w-14" />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

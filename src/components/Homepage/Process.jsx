@@ -1,335 +1,303 @@
-import { useCallback, useRef, useState } from "react";
-import { ChevronRight, CheckCircle2, Phone } from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import React from "react";
 
-// =====================================================
-// CONTENT — Greenfield Housing India Buyer Journey
-// =====================================================
+/* =========================================================
+   GREENFIELD HOUSING INDIA
+   Premium Home-Buying Process
+   Poppins Headings | Montserrat Body
+   Fully Responsive Design
+========================================================= */
 
 const steps = [
   {
-    step: "01",
+    number: "01",
+    eyebrow: "Discover",
     title: "Explore",
-    subtitle: "Discover",
     description:
-      "Browse our residential plot communities across Coimbatore, from Crystal Gateway in Sulur to Silver City on Karamadai Road[cite: 6, 8].",
-    points: [
-      "Compare approved plots[cite: 6, 8]",
-      "Check layout amenities[cite: 8, 10]",
-      "Verify RERA/DTCP details[cite: 8, 10]",
+      "Discover residential plot communities across Coimbatore and shortlist a property that suits your plans.",
+    details: [
+      "Compare available plots",
+      "Explore layout amenities",
+      "Review applicable approval details",
     ],
+    duration: "Your first step",
   },
   {
-    step: "02",
+    number: "02",
+    eyebrow: "Experience",
     title: "Site Visit",
-    subtitle: "Tour & Consult",
     description:
-      "Walk through the internal roads and site conditions. Confirm exact plot dimensions and view completed developments firsthand[cite: 6, 10].",
-    points: [
-      "View entrance & roads[cite: 8, 10]",
-      "Verify plot boundaries[cite: 8]",
-      "Discuss current pricing[cite: 6, 8]",
+      "Visit the property in person to understand the surroundings, layout, road access and plot boundaries.",
+    details: [
+      "Walk through the development",
+      "Check plot dimensions",
+      "Discuss current pricing",
     ],
+    duration: "See it firsthand",
   },
   {
-    step: "03",
-    title: "Book",
-    subtitle: "Documentation",
+    number: "03",
+    eyebrow: "Review",
+    title: "Booking",
     description:
-      "We guide you through transparent documentation, verifying RERA certificates, DTCP approvals, and title deeds before booking[cite: 6, 8, 11].",
-    points: [
-      "Verify RERA/DTCP[cite: 8, 10]",
-      "Review title documents[cite: 11]",
-      "Discuss payment plans[cite: 10]",
+      "Review the property documents, applicable approvals and payment terms before making your booking decision.",
+    details: [
+      "Review approval documents",
+      "Check title documentation",
+      "Understand payment terms",
     ],
+    duration: "Make an informed choice",
   },
   {
-    step: "04",
+    number: "04",
+    eyebrow: "Ownership",
     title: "Handover",
-    subtitle: "Take Possession",
     description:
-      "Secure your registered plot equipped with individual water connections, electricity, and clear boundaries in a secure gated community[cite: 6, 10].",
-    points: [
-      "Final plot inspection[cite: 6]",
-      "Register title deeds[cite: 11]",
-      "Secure your plot[cite: 8, 10]",
+      "Complete the necessary formalities, inspect your plot and proceed with registration and handover as applicable.",
+    details: [
+      "Complete the final inspection",
+      "Proceed with registration",
+      "Confirm plot boundaries",
     ],
+    duration: "Your next chapter",
   },
 ];
 
-// =====================================================
-// 3D TILT — pointer-driven card tilt with soft glare
-// =====================================================
+const phoneNumber = "+917395864774";
 
-function Tilt({ children, className = "", max = 8 }) {
-  const ref = useRef(null);
-  const [style, setStyle] = useState({});
-  const [glare, setGlare] = useState({ x: 50, y: 50, o: 0 });
+const whatsappLink =
+  "https://wa.me/917395864774?text=Hi%2C%20I%27m%20interested%20in%20Greenfield%20Housing%20projects.%20Please%20share%20details.";
 
-  const handleMove = useCallback(
-    (e) => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      setStyle({
-        transform: `perspective(1000px) rotateX(${(0.5 - py) * max * 2}deg) rotateY(${
-          (px - 0.5) * max * 2
-        }deg)`,
-      });
-      setGlare({ x: px * 100, y: py * 100, o: 0.13 });
-    },
-    [max]
-  );
+/* =========================================================
+   PROCESS STEP CARD
+========================================================= */
 
-  const handleLeave = useCallback(() => {
-    setStyle({ transform: "perspective(1000px) rotateX(0deg) rotateY(0deg)" });
-    setGlare((g) => ({ ...g, o: 0 }));
-  }, []);
-
+function ProcessStep({ step, isLast }) {
   return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      className={`relative transition-transform duration-300 ease-out will-change-transform ${className}`}
-      style={{ ...style, transformStyle: "preserve-3d" }}
-    >
-      {children}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
-        style={{
-          opacity: glare.o,
-          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.9), transparent 55%)`,
-        }}
-      />
-    </div>
+    <article className="process-step group relative min-w-0">
+      {/* Timeline marker */}
+      <div className="process-marker relative z-10 mb-4 flex items-center justify-between sm:mb-6">
+        <span className="process-number flex h-11 w-11 shrink-0 items-center justify-center border border-[#d8d9cc] bg-[#faf9f5] font-poppins text-sm font-medium text-[#173c2b] transition duration-300 group-hover:border-[#b99a5b] group-hover:bg-[#173c2b] group-hover:text-white sm:h-16 sm:w-16 sm:text-2xl">
+          {step.number}
+        </span>
+
+        {!isLast && (
+          <span className="process-mobile-line ml-3 h-px flex-1 bg-[#d9dace] lg:hidden" />
+        )}
+
+        <span className="hidden font-montserrat text-[10px] font-medium uppercase tracking-[0.18em] text-[#999887] lg:block">
+          Step {step.number}
+        </span>
+      </div>
+
+      {/* Step card */}
+      <div className="process-card flex h-full flex-col border border-[#e4e3d9] bg-white p-4 transition duration-300 group-hover:-translate-y-1 group-hover:border-[#c7b17e] group-hover:shadow-[0_18px_45px_rgba(23,60,43,0.07)] sm:p-7 lg:min-h-[340px] lg:p-8">
+        <p className="mb-2 font-montserrat text-[9px] font-semibold uppercase tracking-[0.16em] text-[#9a8050] sm:mb-3 sm:text-[10px] sm:tracking-[0.2em]">
+          {step.eyebrow}
+        </p>
+
+        <h3 className="font-poppins text-xl font-medium leading-tight tracking-[-0.03em] text-[#173c2b] sm:text-3xl">
+          {step.title}
+        </h3>
+
+        <p className="mt-3 font-montserrat text-xs leading-6 text-[#74786e] sm:mt-4 sm:text-sm sm:leading-7">
+          {step.description}
+        </p>
+
+        <div className="my-4 h-px w-full bg-[#ecebe3] sm:my-6" />
+
+        <ul className="space-y-2.5 sm:space-y-4">
+          {step.details.map((detail, index) => (
+            <li key={detail} className="flex items-start gap-2.5 sm:gap-3">
+              <span className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center border border-[#d8dfd3] font-montserrat text-[9px] text-[#426348]">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <span className="font-montserrat text-[11px] leading-5 text-[#515c51] sm:text-[13px] sm:leading-6">
+                {detail}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-5 border-t border-[#ecebe3] pt-4 sm:mt-auto sm:pt-5">
+          <p className="font-montserrat text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8b8d80] sm:tracking-[0.16em]">
+            {step.duration}
+          </p>
+        </div>
+      </div>
+    </article>
   );
 }
 
-const AnimatedPoint = ({ text, delay }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
-
-  return (
-    <motion.li
-      ref={ref}
-      className="flex items-start gap-2 md:gap-3"
-      initial={{ opacity: 0, x: -10 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.4, delay: delay * 0.08 }}
-    >
-      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-600 md:h-4 md:w-4" />
-      <span className="font-['Inter',sans-serif] text-xs font-medium leading-relaxed text-slate-600 md:text-sm">
-        {text}
-      </span>
-    </motion.li>
-  );
-};
+/* =========================================================
+   MAIN PROCESS SECTION
+========================================================= */
 
 export default function Process() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.12 });
-  const [drift, setDrift] = useState({ x: 0, y: 0 });
-
-  const handleMove = useCallback((e) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setDrift({
-      x: (e.clientX - rect.left) / rect.width - 0.5,
-      y: (e.clientY - rect.top) / rect.height - 0.5,
-    });
-  }, []);
-
-  const handleLeave = useCallback(() => setDrift({ x: 0, y: 0 }), []);
-
   return (
     <section
       id="process"
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      className="relative w-full overflow-hidden bg-slate-50 py-10 md:py-20"
-      style={{ perspective: "1800px" }}
+      className="relative overflow-hidden bg-[#faf9f5] py-10 sm:py-16 lg:py-24"
     >
-      {/* Background Decor — parallax-driven, green theme */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+        #process {
+          font-family: 'Montserrat', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+        }
+
+        #process .font-poppins {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        #process .font-montserrat {
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        #process .process-timeline {
+          position: relative;
+        }
+
+        @media (min-width: 1024px) {
+          #process .process-timeline::before {
+            content: "";
+            position: absolute;
+            top: 31px;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: #d9dace;
+          }
+
+          #process .process-marker {
+            min-height: 64px;
+          }
+        }
+
+        @media (max-width: 639px) {
+          #process .process-card {
+            border-radius: 0;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          #process *,
+          #process *::before,
+          #process *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
+
+      {/* Subtle background details */}
       <div
-        className="pointer-events-none absolute left-0 top-0 h-[200px] w-[200px] rounded-full bg-emerald-200/30 blur-[80px] transition-transform duration-300 ease-out md:h-[350px] md:w-[350px]"
-        style={{ transform: `translate3d(${drift.x * -30}px, ${drift.y * -30}px, 0)` }}
-      />
-      <div
-        className="pointer-events-none absolute bottom-0 right-0 h-[200px] w-[200px] rounded-full bg-slate-200/40 blur-[80px] transition-transform duration-300 ease-out md:h-[400px] md:w-[400px]"
-        style={{ transform: `translate3d(${drift.x * 20}px, ${drift.y * 20}px, 0)` }}
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 top-12 h-48 w-48 rounded-full bg-[#e9e6d9]/50 blur-3xl sm:-right-28 sm:top-16 sm:h-72 sm:w-72"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-12 xl:px-16">
-        {/* Section Header */}
-        <div className="mb-8 grid gap-4 md:mb-12 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-56 rounded-full bg-[#e6ebe0]/60 blur-3xl sm:-left-24 sm:h-80 sm:w-80"
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-14">
+        {/* Section heading */}
+        <div className="mb-8 grid gap-5 sm:mb-12 sm:gap-7 lg:mb-16 lg:grid-cols-[1.1fr_0.7fr] lg:items-end">
           <div>
-            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-1 shadow-sm md:mb-4 md:px-4 md:py-1.5">
-              <span className="font-['Poppins',sans-serif] text-[9px] font-bold uppercase tracking-wider text-emerald-700 md:text-[10px] md:tracking-[0.2em]">
-                Home Buying Journey
+            <div className="mb-4 flex items-center gap-3 sm:mb-5">
+              <span className="h-px w-7 bg-[#b99a5b] sm:w-9" />
+
+              <span className="font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#6c775f] sm:text-[10px] sm:tracking-[0.23em]">
+                The buying process
               </span>
             </div>
 
-            <h2 className="font-['Poppins',sans-serif] max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 md:text-3xl lg:text-4xl">
-              Your Path to Ownership,
-              <span className="block text-emerald-600">
-                From Visit to Handover.
+            <h2 className="max-w-3xl font-poppins text-[30px] font-medium leading-[1.15] tracking-[-0.04em] text-[#173c2b] sm:text-5xl lg:text-6xl">
+              From the first visit
+              <span className="mt-1.5 block text-[#8c784d] sm:mt-2">
+                to a place of your own.
               </span>
             </h2>
           </div>
 
-          <div className="max-w-lg lg:ml-auto">
-            <p className="font-['Inter',sans-serif] text-xs font-medium leading-relaxed text-slate-600 md:text-sm">
-              A clear, guided path from your first site visit to the day you
-              take possession — with fully verified documents and transparent
-              communication[cite: 10, 11].
+          <div className="max-w-xl lg:ml-auto">
+            <p className="font-montserrat text-xs leading-6 text-[#74786e] sm:text-base sm:leading-8">
+              Buying a property is an important decision. Our four-step
+              journey helps you explore your options, visit the site, review
+              documentation and understand the next steps towards ownership.
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-1.5 md:mt-4 md:gap-2">
-              {["Explore", "Site Visit", "Book", "Handover"].map((item) => (
-                <span
-                  key={item}
-                  className="font-['Poppins',sans-serif] rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[8px] font-bold uppercase tracking-wider text-slate-700 shadow-sm transition-colors hover:border-emerald-200 hover:text-emerald-600 md:px-3 md:py-1.5 md:text-[9px]"
-                >
-                  {item}
+            <a
+              href="#projects"
+              className="mt-4 inline-flex items-center gap-3 border-b border-[#b99a5b] pb-2 font-montserrat text-xs font-semibold text-[#173c2b] transition hover:gap-5 sm:mt-5"
+            >
+              Explore our projects
+              <span aria-hidden="true" className="text-lg">
+                →
+              </span>
+            </a>
+          </div>
+        </div>
+
+        {/* Responsive process steps */}
+        <div className="process-timeline grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-5">
+          {steps.map((step, index) => (
+            <ProcessStep
+              key={step.number}
+              step={step}
+              isLast={index === steps.length - 1}
+            />
+          ))}
+        </div>
+
+        {/* Contact CTA */}
+        <div className="mt-8 overflow-hidden bg-[#173c2b] sm:mt-14 lg:mt-20">
+          <div className="grid lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="px-5 py-7 sm:px-10 sm:py-11 lg:px-12 lg:py-14">
+              <p className="mb-2 font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#d8c49b] sm:mb-3 sm:text-[10px] sm:tracking-[0.22em]">
+                Let’s get started
+              </p>
+
+              <h3 className="max-w-2xl font-poppins text-2xl font-medium leading-tight tracking-[-0.03em] text-white sm:text-4xl lg:text-5xl">
+                Your property journey begins with a conversation.
+              </h3>
+
+              <p className="mt-3 max-w-xl font-montserrat text-xs leading-6 text-white/65 sm:mt-4 sm:text-sm sm:leading-7">
+                Speak with our team for project information, site visit
+                arrangements and current pricing.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2.5 px-5 pb-6 sm:flex-row sm:px-10 sm:pb-8 lg:flex-col lg:px-12 lg:py-10">
+              <a
+                href={`tel:${phoneNumber}`}
+                className="inline-flex min-h-11 items-center justify-center gap-3 bg-[#d2b477] px-5 py-3 font-montserrat text-[10px] font-semibold text-[#173c2b] transition hover:bg-[#e0c894] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:min-h-12 sm:px-6 sm:text-xs"
+              >
+                <span>Call 73958 64774</span>
+                <span aria-hidden="true" className="text-lg">
+                  →
                 </span>
-              ))}
+              </a>
+
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-3 border border-white/30 px-5 py-3 font-montserrat text-[10px] font-semibold text-white transition hover:border-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:min-h-12 sm:px-6 sm:text-xs"
+              >
+                WhatsApp our team
+                <span aria-hidden="true" className="text-lg">
+                  ↗
+                </span>
+              </a>
             </div>
           </div>
         </div>
-
-        {/* Process Timeline */}
-        <div className="relative">
-          {/* Desktop Connecting Line */}
-          <div
-            className="absolute left-0 right-0 top-[30px] hidden h-[2px] bg-slate-200 lg:block md:top-[35px]"
-            style={{ transform: "translateZ(-10px)" }}
-          />
-
-          <motion.div
-            className="absolute left-0 top-[30px] hidden h-[2px] bg-emerald-600 lg:block md:top-[35px]"
-            initial={{ width: "0%" }}
-            animate={isInView ? { width: "100%" } : {}}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            style={{ transform: "translateZ(-10px)" }}
-          />
-
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {steps.map((step, idx) => (
-              <motion.article
-                key={step.step}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{
-                  duration: 0.5,
-                  delay: idx * 0.15,
-                  ease: "easeOut",
-                }}
-                className="group relative flex h-full flex-col"
-              >
-                {/* Step Number Node */}
-                <div className="relative z-10 mb-3 flex items-center justify-between md:mb-4">
-                  <div
-                    className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 group-hover:border-emerald-300 group-hover:shadow-md lg:h-16 lg:w-16"
-                    style={{ transform: "translateZ(10px)" }}
-                  >
-                    <span className="font-['Poppins',sans-serif] text-lg font-black text-emerald-600 lg:text-2xl">
-                      {step.step}
-                    </span>
-                  </div>
-
-                  <div className="hidden h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors group-hover:border-emerald-200 group-hover:text-emerald-600 lg:flex">
-                    <ChevronRight className="h-4 w-4" />
-                  </div>
-                </div>
-
-                {/* Card */}
-                <Tilt max={6} className="flex flex-1">
-                  <div className="flex flex-1 flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:border-emerald-200 hover:shadow-md md:p-6">
-                    <div style={{ transform: "translateZ(10px)" }}>
-                      <span className="font-['Poppins',sans-serif] text-[9px] font-bold uppercase tracking-wider text-emerald-600 md:text-[10px]">
-                        {step.subtitle}
-                      </span>
-
-                      <h3 className="font-['Poppins',sans-serif] mt-1.5 text-lg font-bold leading-tight text-slate-950 md:mt-2 md:text-xl">
-                        {step.title}
-                      </h3>
-
-                      <p className="font-['Inter',sans-serif] mt-2 text-[11px] font-medium leading-relaxed text-slate-600 md:mt-3 md:text-xs">
-                        {step.description}
-                      </p>
-                    </div>
-
-                    <ul className="mt-4 space-y-2 border-t border-slate-100 pt-4 md:mt-5 md:space-y-3 md:pt-5">
-                      {step.points.map((point, pointIndex) => (
-                        <AnimatedPoint
-                          key={point}
-                          text={point}
-                          delay={pointIndex + idx * 2}
-                        />
-                      ))}
-                    </ul>
-
-                    <div className="mt-auto pt-4 md:pt-6">
-                      <div
-                        className="inline-block rounded-full bg-emerald-50 px-2.5 py-1 md:px-3 md:py-1.5"
-                        style={{ transform: "translateZ(10px)" }}
-                      >
-                        <span className="font-['Poppins',sans-serif] text-[8px] font-bold uppercase tracking-wider text-emerald-700 md:text-[9px]">
-                          Stage {step.step}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Tilt>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA — Speak with Sales */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm md:mt-14 md:flex-row md:p-8"
-        >
-          <div className="text-center md:text-left">
-            <span className="font-['Poppins',sans-serif] text-[9px] font-bold uppercase tracking-wider text-emerald-700 md:text-[10px]">
-              Ready to Begin?
-            </span>
-            <h3 className="font-['Poppins',sans-serif] mt-1.5 text-xl font-black text-slate-950 md:mt-2 md:text-2xl">
-              Speak with our sales team
-            </h3>
-            <p className="font-['Inter',sans-serif] mt-1.5 max-w-lg text-xs font-medium text-slate-600 md:mt-2 md:text-sm">
-              Call us at <strong className="text-slate-950">7395864774</strong> for site
-              visits, project details, and current pricing[cite: 3, 5, 6].
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-2.5 md:justify-start">
-            <a
-              href="tel:+917395864774"
-              className="group inline-flex items-center gap-2 rounded-full bg-emerald-700 px-5 py-2.5 font-['Inter',sans-serif] text-sm font-bold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-800 md:gap-2.5 md:px-6 md:py-3"
-            >
-              <Phone className="h-4 w-4" />
-              Call 7395864774
-            </a>
-
-            <a
-              href="https://wa.me/917395864774?text=Hi%2C%20I%27m%20interested%20in%20Greenfield%20Housing%20projects.%20Please%20share%20details."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 font-['Inter',sans-serif] text-sm font-bold text-slate-800 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50 md:gap-2.5 md:px-6 md:py-3"
-            >
-              WhatsApp
-            </a>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

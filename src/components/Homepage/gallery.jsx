@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { X, MessageCircle, ArrowUpRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-// Assuming these are your imports
 import Image1 from "../../assests/gallery/gallery1.webp";
 import Image2 from "../../assests/gallery/gallery2.webp";
 import Image3 from "../../assests/gallery/gallery3.webp";
@@ -9,361 +7,555 @@ import Image4 from "../../assests/gallery/gallery4.webp";
 import Image5 from "../../assests/team/herosection/cubehero3.webp";
 import Image6 from "../../assests/team/herosection/cubehero4.webp";
 
+/* =========================================================
+   CUBE4SPACES — RESPONSIVE PROJECT GALLERY
+   Poppins Headings | Montserrat Body | Responsive Modal
+========================================================= */
+
+const WHATSAPP_NUMBER = "917395864774";
+
 const projects = [
   {
     id: 1,
     img: Image1,
     category: "Kitchen",
     title: "Modular Kitchen",
-    desc: "Elegant kitchen design with smart storage, premium finish, and practical workflow.",
+    desc: "An elegant kitchen concept combining smart storage, considered finishes and an efficient everyday workflow.",
   },
   {
     id: 2,
     img: Image2,
     category: "Interior",
     title: "Living Interior",
-    desc: "Modern interior styling designed for comfort, function, and visual balance.",
+    desc: "A contemporary living space balancing comfort, functionality, natural textures and visual harmony.",
   },
   {
     id: 3,
     img: Image3,
     category: "Commercial",
     title: "Office Space",
-    desc: "A productive workspace planned with clean design and efficient space usage.",
+    desc: "A professional workspace designed around productivity, thoughtful planning and efficient use of space.",
   },
   {
     id: 4,
     img: Image4,
     category: "Bedroom",
     title: "Luxury Room",
-    desc: "Warm bedroom interiors with refined materials and a calm premium look.",
+    desc: "A calm bedroom concept featuring warm tones, refined materials and a relaxed atmosphere.",
   },
   {
     id: 5,
     img: Image5,
     category: "Residential",
     title: "Urban Home",
-    desc: "A complete home concept focused on light, space, and long-term usability.",
+    desc: "A cohesive home concept focused on light, comfortable movement and practical long-term living.",
   },
   {
     id: 6,
     img: Image6,
     category: "Workspace",
     title: "Creative Studio",
-    desc: "A smart workspace designed for focus, collaboration, and modern business needs.",
+    desc: "A contemporary studio designed to support focused work, collaboration and creative thinking.",
   },
 ];
 
-const bottomCards = [
+const studioFeatures = [
   {
-    label: "Planning",
-    title: "Smart space planning",
-    desc: "We plan every corner for comfort, flow, and practical daily use.",
-    dark: true,
+    label: "01 / Planning",
+    title: "Space with purpose.",
+    desc: "Thoughtful layouts that improve movement, comfort and everyday functionality.",
+    variant: "dark",
   },
   {
-    label: "Execution",
-    title: "Quality-driven interiors",
-    desc: "Clean finishes, reliable materials, and supervised project delivery.",
+    label: "02 / Execution",
+    title: "Details matter.",
+    desc: "A considered approach to finishes, materials and on-site coordination.",
     image: Image2,
+    variant: "image",
   },
   {
-    label: "Turnkey",
-    title: "Design to handover",
-    desc: "One team manages the full journey from concept to completion.",
+    label: "03 / Turnkey",
+    title: "One connected journey.",
+    desc: "Design and execution coordinated around a clear project vision.",
     image: Image5,
+    variant: "image",
   },
   {
-    label: "Support",
-    title: "A team you can trust",
-    desc: "Clear communication, timely updates, and professional coordination.",
-    soft: true,
+    label: "04 / Support",
+    title: "Clear communication.",
+    desc: "Consistent updates and professional coordination throughout the process.",
+    variant: "light",
   },
 ];
+
+function openWhatsApp(subject = "Project Gallery") {
+  const message = encodeURIComponent(
+    `Hello! I would like to know more about ${subject} by Cube4Spaces. Please share the details.`
+  );
+
+  window.open(
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
+function Arrow({ diagonal = false }) {
+  return (
+    <span aria-hidden="true" className="inline-block text-lg leading-none sm:text-xl">
+      {diagonal ? "↗" : "→"}
+    </span>
+  );
+}
+
+/* =========================================================
+   PROJECT CARD
+========================================================= */
+
+function ProjectCard({ project, index, onOpen }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(project)}
+      aria-label={`View details for ${project.title}`}
+      className="gallery-project group relative block w-full overflow-hidden bg-[#e8e6dd] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#173c2b]"
+    >
+      <div className="relative aspect-[4/4.7] overflow-hidden sm:aspect-[4/5] lg:aspect-[4/4.8]">
+        <img
+          src={project.img}
+          alt={project.title}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.045]"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#101b14]/95 via-[#101b14]/15 to-[#101b14]/5 transition-opacity duration-500 group-hover:from-[#101b14]/95" />
+
+        {/* Category */}
+        <div className="absolute left-3 right-3 top-3 flex items-center justify-between gap-2 sm:left-5 sm:right-5 sm:top-5 sm:gap-3">
+          <span className="max-w-[75%] truncate border border-white/40 bg-[#faf9f4]/95 px-2.5 py-1.5 font-montserrat text-[9px] font-semibold uppercase tracking-[0.12em] text-[#173c2b] sm:px-3 sm:py-2 sm:text-[10px] sm:tracking-[0.14em]">
+            {project.category}
+          </span>
+
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-white/60 bg-white/10 text-white backdrop-blur-sm transition duration-300 group-hover:border-[#d5bc84] group-hover:bg-[#d5bc84] group-hover:text-[#173c2b] sm:h-10 sm:w-10">
+            <Arrow diagonal />
+          </span>
+        </div>
+
+        {/* Project information */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-7">
+          <div className="mb-2 flex items-center gap-2.5 sm:mb-3 sm:gap-3">
+            <span className="h-px w-5 bg-[#d5bc84] sm:w-6" />
+            <span className="font-montserrat text-[9px] font-medium uppercase tracking-[0.16em] text-white/70 sm:tracking-[0.2em]">
+              Project {String(index + 1).padStart(2, "0")}
+            </span>
+          </div>
+
+          <h3 className="font-poppins text-xl font-medium leading-tight tracking-[-0.025em] text-white sm:text-3xl">
+            {project.title}
+          </h3>
+
+          <p className="mt-2 line-clamp-3 max-w-md font-montserrat text-[11px] leading-5 text-white/75 sm:mt-3 sm:text-sm sm:leading-7">
+            {project.desc}
+          </p>
+
+          <div className="mt-3 flex items-center gap-2 font-montserrat text-[9px] font-semibold uppercase tracking-[0.12em] text-[#e1c994] sm:mt-5 sm:tracking-[0.16em]">
+            View project details
+            <Arrow />
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/* =========================================================
+   STUDIO FEATURE CARD
+========================================================= */
+
+function StudioFeatureCard({ card }) {
+  const isDark = card.variant === "dark";
+  const isLight = card.variant === "light";
+  const hasImage = Boolean(card.image);
+
+  return (
+    <article
+      className={`studio-feature group relative flex min-h-[235px] flex-col justify-between overflow-hidden p-5 sm:min-h-[290px] sm:p-7 lg:min-h-[340px] lg:p-8 ${
+        isDark
+          ? "bg-[#173c2b] text-white"
+          : isLight
+          ? "border border-[#dedfd4] bg-[#f2f0e8] text-[#173c2b]"
+          : "bg-[#e8e6dd] text-white"
+      }`}
+    >
+      {hasImage && (
+        <>
+          <img
+            src={card.image}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101b14]/95 via-[#101b14]/45 to-[#101b14]/15" />
+        </>
+      )}
+
+      <div className="relative z-10">
+        <span
+          className={`inline-block border px-2.5 py-1.5 font-montserrat text-[9px] font-semibold uppercase tracking-[0.12em] sm:px-3 sm:py-2 sm:tracking-[0.15em] ${
+            isDark
+              ? "border-white/20 text-white/75"
+              : isLight
+              ? "border-[#cfd1c4] text-[#5d6b58]"
+              : "border-white/40 bg-black/10 text-white"
+          }`}
+        >
+          {card.label}
+        </span>
+      </div>
+
+      <div className="relative z-10 mt-8 sm:mt-12">
+        <span
+          className={`mb-3 block h-px w-8 ${
+            isLight ? "bg-[#b99a5b]" : "bg-[#d5bc84]"
+          }`}
+        />
+
+        <h3
+          className={`max-w-xs font-poppins text-xl font-medium leading-tight tracking-[-0.025em] sm:text-3xl ${
+            isLight ? "text-[#173c2b]" : "text-white"
+          }`}
+        >
+          {card.title}
+        </h3>
+
+        <p
+          className={`mt-2 max-w-sm font-montserrat text-xs leading-5 sm:mt-3 sm:text-sm sm:leading-7 ${
+            isDark
+              ? "text-white/70"
+              : isLight
+              ? "text-[#6f7569]"
+              : "text-white/80"
+          }`}
+        >
+          {card.desc}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+/* =========================================================
+   PROJECT DETAIL MODAL
+========================================================= */
+
+function ProjectModal({ project, onClose }) {
+  useEffect(() => {
+    if (!project) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [project, onClose]);
+
+  if (!project) return null;
+
+  return (
+    <div
+      className="gallery-modal fixed inset-0 z-[100] flex items-end justify-center bg-[#101b14]/80 p-0 backdrop-blur-sm sm:items-center sm:p-5 lg:p-8"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gallery-modal-title"
+        className="relative flex max-h-[94dvh] w-full max-w-5xl flex-col overflow-hidden bg-[#faf9f5] shadow-2xl sm:max-h-[90dvh] sm:flex-row"
+      >
+        {/* Modal image */}
+        <div className="relative h-[30dvh] min-h-[165px] shrink-0 overflow-hidden bg-[#e8e6dd] sm:h-auto sm:min-h-[440px] sm:w-1/2">
+          <img
+            src={project.img}
+            alt={project.title}
+            className="h-full w-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-[#101b14]/45 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-[#101b14]/10" />
+
+          <span className="absolute bottom-3 left-4 border border-white/60 bg-white/90 px-2.5 py-1.5 font-montserrat text-[9px] font-semibold uppercase tracking-[0.14em] text-[#173c2b] sm:bottom-6 sm:left-6 sm:px-3 sm:py-2 sm:tracking-[0.16em]">
+            {project.category}
+          </span>
+        </div>
+
+        {/* Modal details */}
+        <div className="gallery-modal-content relative flex min-h-0 flex-1 flex-col overflow-y-auto p-4 sm:w-1/2 sm:p-8 md:p-10 lg:p-12">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close project details"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center border border-[#dcded3] text-[#173c2b] transition hover:bg-[#173c2b] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#173c2b] sm:right-6 sm:top-6 sm:h-10 sm:w-10"
+          >
+            <span aria-hidden="true" className="text-2xl leading-none">
+              ×
+            </span>
+          </button>
+
+          <div className="mb-4 mt-1 pr-10 sm:mb-8 sm:mt-8">
+            <p className="mb-3 font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#8c784d] sm:mb-4 sm:text-[10px] sm:tracking-[0.2em]">
+              Selected project
+            </p>
+
+            <h2
+              id="gallery-modal-title"
+              className="font-poppins text-2xl font-medium leading-tight tracking-[-0.035em] text-[#173c2b] sm:text-4xl lg:text-5xl"
+            >
+              {project.title}
+            </h2>
+
+            <p className="mt-3 font-montserrat text-xs leading-6 text-[#72776c] sm:mt-5 sm:text-base sm:leading-8">
+              {project.desc}
+            </p>
+          </div>
+
+          <div className="mt-auto border-t border-[#e3e2d8] pt-4 sm:pt-7">
+            <p className="mb-3 font-montserrat text-xs leading-5 text-[#7b7e72] sm:mb-4 sm:leading-6">
+              Have a similar space in mind? Contact our team to discuss your
+              requirements and project details.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => openWhatsApp(project.title)}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-3 bg-[#173c2b] px-4 py-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#2b5940] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#173c2b] sm:min-h-12 sm:w-auto sm:px-5 sm:text-xs sm:tracking-[0.1em]"
+            >
+              Enquire on WhatsApp
+              <Arrow diagonal />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   MAIN GALLERY COMPONENT
+========================================================= */
 
 export default function GalleryGrid() {
   const [selectedProject, setSelectedProject] = useState(null);
 
-  const openModal = (project) => {
-    setSelectedProject(project);
-  };
-
-  const closeModal = () => {
-    setSelectedProject(null);
-  };
-
-  const redirectToWhatsApp = (title) => {
-    const message = encodeURIComponent(
-      `Hello! I would like to know more about this Cube4Spaces project: ${title}`
-    );
-    window.open(`https://wa.me/?text=${message}`, "_blank");
-  };
+  const closeModal = () => setSelectedProject(null);
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-slate-50 py-12 md:py-24">
-      {/* Background Decor */}
-      <div className="pointer-events-none absolute left-0 top-0 h-[300px] w-[300px] rounded-full bg-slate-200/40 blur-[100px] md:h-[500px] md:w-[500px]" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-indigo-200/30 blur-[100px] md:h-[500px] md:w-[500px]" />
+    <section
+      id="gallery"
+      className="relative overflow-hidden bg-[#faf9f5] py-10 sm:py-16 lg:py-24"
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 sm:px-8 lg:px-12 xl:px-16">
-        
+        #gallery,
+        .gallery-modal {
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        #gallery .font-poppins,
+        .gallery-modal .font-poppins {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        #gallery .font-montserrat,
+        .gallery-modal .font-montserrat {
+          font-family: 'Montserrat', sans-serif;
+        }
+
+        #gallery .gallery-project {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: none) {
+          #gallery .gallery-project:active img {
+            transform: scale(1.02);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          #gallery *,
+          #gallery *::before,
+          #gallery *::after,
+          .gallery-modal *,
+          .gallery-modal *::before,
+          .gallery-modal *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
+
+      {/* Background detail */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-[#e8e5d8]/50 blur-3xl sm:h-96 sm:w-96"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-32 top-[38%] h-72 w-72 rounded-full bg-[#e6ebe0]/60 blur-3xl sm:h-[420px] sm:w-[420px]"
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-3 sm:px-6 lg:px-12 xl:px-14">
         {/* Header */}
-        <header className="mb-10 grid gap-6 md:mb-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+        <header className="mb-8 grid gap-5 sm:mb-12 sm:gap-7 lg:mb-16 lg:grid-cols-[1.1fr_0.75fr] lg:items-end">
           <div>
-            <span className="font-['Poppins',sans-serif] mb-4 inline-flex rounded-full border border-indigo-100 bg-indigo-50 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-indigo-700 md:mb-6 md:px-5 md:py-2 md:text-sm">
-              Project Gallery
-            </span>
+            <div className="mb-4 flex items-center gap-3 sm:mb-5">
+              <span className="h-px w-9 bg-[#b99a5b]" />
+              <span className="font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#6c775f] sm:text-[10px] sm:tracking-[0.22em]">
+                Selected work
+              </span>
+            </div>
 
-            <h1 className="font-['Poppins',sans-serif] max-w-4xl text-4xl font-black leading-[1.1] tracking-tight text-slate-950 md:text-5xl lg:leading-[1.05]">
-              Crafted Spaces.
-              <br />
-              Built Beautifully.
+            <h1 className="max-w-3xl font-poppins text-3xl font-medium leading-[1.12] tracking-[-0.04em] text-[#173c2b] sm:text-5xl md:text-6xl lg:text-7xl">
+              Crafted spaces.
+              <span className="mt-1.5 block text-[#8c784d] sm:mt-2">
+                Considered living.
+              </span>
             </h1>
           </div>
 
-          <div className="max-w-xl lg:ml-auto">
-            <p className="font-['Inter',sans-serif] text-base font-medium leading-relaxed text-slate-600 md:text-xl">
-              Explore selected Cube4Spaces projects across interiors, kitchens,
-              homes, offices, and turnkey spaces.
+          <div className="max-w-xl lg:ml-auto lg:pb-1">
+            <p className="font-montserrat text-xs leading-6 text-[#74786e] sm:text-base sm:leading-8">
+              Explore selected Cube4Spaces concepts across kitchens, homes,
+              bedrooms, offices and creative workspaces. Each project starts
+              with an understanding of how the space should work for you.
             </p>
 
             <button
-              onClick={() => redirectToWhatsApp("Project Gallery")}
-              className="font-['Inter',sans-serif] mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-indigo-600 active:scale-95 sm:w-auto md:mt-8 md:px-8 md:py-4 md:text-base"
+              type="button"
+              onClick={() => openWhatsApp("Project Gallery")}
+              className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-3 bg-[#173c2b] px-4 py-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#2b5940] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#173c2b] sm:mt-6 sm:w-auto sm:min-w-[220px] sm:gap-4 sm:px-6 sm:text-xs sm:tracking-[0.12em]"
             >
-              Chat on WhatsApp
-              <MessageCircle className="h-5 w-5" />
+              Discuss your project
+              <Arrow diagonal />
             </button>
           </div>
         </header>
 
-        {/* Gallery Grid */}
-        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:gap-8">
+        {/* Gallery introduction */}
+        <div className="mb-4 flex items-end justify-between gap-3 border-b border-[#e2e1d7] pb-3 sm:mb-7 sm:gap-4 sm:pb-5">
+          <div>
+            <p className="font-montserrat text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8c784d] sm:text-[10px] sm:tracking-[0.18em]">
+              Portfolio
+            </p>
+            <h2 className="mt-1.5 font-poppins text-xl font-medium text-[#173c2b] sm:mt-2 sm:text-3xl">
+              A closer look
+            </h2>
+          </div>
+
+          <span className="pb-1 font-montserrat text-[9px] uppercase tracking-[0.1em] text-[#85877b] sm:text-xs sm:tracking-[0.12em]">
+            06 projects
+          </span>
+        </div>
+
+        {/* Responsive gallery grid */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {projects.map((project, index) => (
-            <article
+            <ProjectCard
               key={project.id}
-              onClick={() => openModal(project)}
-              className={`group relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl md:rounded-[2rem] ${
-                index % 2 === 0 ? "lg:mt-0" : "lg:mt-10"
-              }`}
-            >
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <img
-                  src={project.img}
-                  alt={project.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" />
-
-                <div className="absolute left-4 right-4 top-4 flex items-center justify-between md:left-6 md:right-6 md:top-6">
-                  <span className="font-['Poppins',sans-serif] rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-800 backdrop-blur md:px-4 md:py-2 md:text-xs">
-                    {project.category}
-                  </span>
-
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-slate-900 backdrop-blur transition-colors group-hover:bg-indigo-600 group-hover:text-white md:h-10 md:w-10">
-                    <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5" />
-                  </span>
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
-                  <span className="font-['Poppins',sans-serif] mb-2 block text-xs font-bold text-white/70 md:mb-3 md:text-sm">
-                    0{project.id}
-                  </span>
-
-                  <h3 className="font-['Poppins',sans-serif] text-2xl font-bold leading-tight text-white md:text-3xl">
-                    {project.title}
-                  </h3>
-
-                  <p className="font-['Inter',sans-serif] mt-2 line-clamp-2 text-sm font-medium leading-relaxed text-slate-300 md:mt-3 md:text-base">
-                    {project.desc}
-                  </p>
-                </div>
-              </div>
-            </article>
+              project={project}
+              index={index}
+              onOpen={setSelectedProject}
+            />
           ))}
         </div>
 
-        {/* Bottom Studio Section */}
-        <section className="mt-16 overflow-hidden rounded-3xl bg-white px-4 py-12 shadow-sm md:mt-24 md:rounded-[3rem] md:px-10 md:py-20 lg:px-16 lg:py-24">
-          <div className="mx-auto max-w-[1400px]">
-            
-            {/* Top Heading */}
-            <div className="mb-10 grid gap-6 md:mb-16 lg:grid-cols-[1fr_1fr] lg:items-start">
-              <div>
-                <span className="font-['Poppins',sans-serif] mb-4 block text-sm font-bold uppercase tracking-[0.2em] text-indigo-600 md:mb-6">
-                  About Studio
+        {/* Studio section */}
+        <section
+          id="studio"
+          className="mt-12 border-t border-[#e2e1d7] pt-9 sm:mt-20 sm:pt-16 lg:mt-28 lg:pt-20"
+        >
+          <div className="mb-7 grid gap-5 sm:mb-12 sm:gap-6 lg:grid-cols-2 lg:items-end">
+            <div>
+              <div className="mb-4 flex items-center gap-3 sm:mb-5">
+                <span className="h-px w-8 bg-[#b99a5b]" />
+                <span className="font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#6c775f] sm:text-[10px] sm:tracking-[0.2em]">
+                  The studio approach
                 </span>
-
-                <h2 className="font-['Poppins',sans-serif] max-w-2xl text-3xl font-black leading-[1.1] tracking-tight text-slate-950 md:text-4xl lg:text-5xl">
-                  Cube4Spaces creates beautiful spaces with{" "}
-                  <span className="text-slate-400">
-                    practical planning and premium execution.
-                  </span>
-                </h2>
               </div>
-              
-              <div className="lg:pt-10">
-                <p className="font-['Inter',sans-serif] max-w-xl text-base font-medium leading-relaxed text-slate-600 md:text-lg lg:text-xl">
-                  We combine design thinking, material knowledge, and site
-                  execution to deliver interiors that look refined and work well
-                  in real life.
-                </p>
-              </div>
-            </div>
 
-            {/* Bottom Cards */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4 lg:items-end">
-              {bottomCards.map((card, index) => (
-                <article
-                  key={card.title}
-                  className={`group relative min-h-[220px] overflow-hidden rounded-2xl border p-5 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl md:min-h-[320px] md:rounded-[2rem] md:p-8 ${
-                    index === 1 || index === 3 ? "lg:translate-y-8" : ""
-                  } ${
-                    card.dark
-                      ? "border-slate-900 bg-slate-950 text-white"
-                      : card.soft
-                      ? "border-slate-200 bg-slate-100 text-slate-900"
-                      : "border-slate-200 bg-white text-white"
-                  }`}
-                >
-                  {card.image && (
-                    <>
-                      <img
-                        src={card.image}
-                        alt={card.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
-                    </>
-                  )}
-
-                  <div className="relative z-10 flex h-full flex-col justify-between">
-                    <span
-                      className={`font-['Poppins',sans-serif] w-fit rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider md:px-4 md:py-2 md:text-xs ${
-                        card.dark
-                          ? "border-slate-700 bg-slate-800/50 text-slate-300"
-                          : card.soft
-                          ? "border-slate-300 bg-white/50 text-slate-600"
-                          : "border-white/30 bg-black/20 text-white/90 backdrop-blur-md"
-                      }`}
-                    >
-                      {card.label}
-                    </span>
-
-                    <div className="mt-8 md:mt-0">
-                      <h3
-                        className={`font-['Poppins',sans-serif] text-xl font-bold leading-tight md:text-2xl ${
-                          card.dark
-                            ? "text-white"
-                            : card.soft
-                            ? "text-slate-950"
-                            : "text-white"
-                        }`}
-                      >
-                        {card.title}
-                      </h3>
-
-                      <p
-                        className={`font-['Inter',sans-serif] mt-2 max-w-xs text-sm font-medium leading-relaxed md:mt-3 md:text-base ${
-                          card.dark
-                            ? "text-slate-400"
-                            : card.soft
-                            ? "text-slate-600"
-                            : "text-slate-200"
-                        }`}
-                      >
-                        {card.desc}
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {/* CTA Strip */}
-            <div className="mt-12 flex flex-col items-start justify-between gap-5 rounded-2xl bg-indigo-50 p-6 md:mt-24 md:flex-row md:items-center md:rounded-[2rem] md:p-10">
-              <div>
-                <span className="font-['Poppins',sans-serif] text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 md:text-sm">
-                  Start Your Project
+              <h2 className="max-w-2xl font-poppins text-2xl font-medium leading-tight tracking-[-0.03em] text-[#173c2b] sm:text-4xl lg:text-5xl">
+                Good design should look beautiful
+                <span className="text-[#8c784d]">
+                  {" "}and live beautifully.
                 </span>
-                <h3 className="font-['Poppins',sans-serif] mt-2 text-2xl font-black text-slate-950 md:mt-3 md:text-4xl">
-                  Ready to design your space?
-                </h3>
-              </div>
-
-              <button
-                onClick={() => redirectToWhatsApp("New Interior Project")}
-                className="font-['Inter',sans-serif] inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-4 text-base font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95 md:w-auto md:px-8 md:text-lg"
-              >
-                Get Project Quote
-                <MessageCircle className="h-5 w-5" />
-              </button>
+              </h2>
             </div>
+
+            <div className="max-w-xl lg:ml-auto lg:pb-1">
+              <p className="font-montserrat text-xs leading-6 text-[#74786e] sm:text-base sm:leading-8">
+                We bring together design planning, material selection and
+                project coordination to create spaces that feel considered,
+                function effectively and reflect the needs of the people who
+                use them.
+              </p>
+            </div>
+          </div>
+
+          {/* Feature cards */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+            {studioFeatures.map((card) => (
+              <StudioFeatureCard key={card.label} card={card} />
+            ))}
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-6 grid gap-4 bg-[#f0efe7] p-4 sm:mt-10 sm:gap-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center md:gap-8 lg:p-10">
+            <div>
+              <p className="mb-2 font-montserrat text-[9px] font-semibold uppercase tracking-[0.18em] text-[#8c784d] sm:mb-3 sm:text-[10px] sm:tracking-[0.2em]">
+                Start a conversation
+              </p>
+
+              <h3 className="max-w-2xl font-poppins text-2xl font-medium leading-tight tracking-[-0.03em] text-[#173c2b] sm:text-4xl">
+                Have a space in mind?
+              </h3>
+
+              <p className="mt-2 max-w-xl font-montserrat text-xs leading-6 text-[#74786e] sm:mt-3 sm:text-sm sm:leading-7">
+                Tell us about your home, workplace or interior design goals.
+                Let’s discuss the possibilities for your project.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => openWhatsApp("New Interior Project")}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-3 bg-[#173c2b] px-4 py-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#2b5940] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#173c2b] sm:min-h-12 sm:w-auto sm:min-w-[230px] sm:gap-4 sm:px-6 sm:py-4 sm:text-xs sm:tracking-[0.12em]"
+            >
+              Request a consultation
+              <Arrow diagonal />
+            </button>
           </div>
         </section>
-
-        {/* Modal */}
-        {selectedProject && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm md:p-8"
-            onClick={closeModal}
-          >
-            <div
-              className="relative flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl md:flex-row md:rounded-[2.5rem]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Image */}
-              <div className="relative h-64 w-full flex-shrink-0 md:h-auto md:w-1/2">
-                <img
-                  src={selectedProject.img}
-                  alt={selectedProject.title}
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent md:hidden" />
-              </div>
-
-              {/* Modal Content */}
-              <div className="flex flex-col justify-center overflow-y-auto p-6 md:w-1/2 md:p-12 lg:p-16">
-                <span className="font-['Poppins',sans-serif] mb-3 inline-flex w-fit rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 md:mb-5 md:px-5 md:py-2 md:text-sm">
-                  {selectedProject.category}
-                </span>
-
-                <h2 className="font-['Poppins',sans-serif] text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                  {selectedProject.title}
-                </h2>
-
-                <p className="font-['Inter',sans-serif] mt-4 text-base font-medium leading-relaxed text-slate-600 md:mt-6 md:text-lg lg:text-xl">
-                  {selectedProject.desc}
-                </p>
-
-                <div className="mt-8 border-t border-slate-100 pt-6 md:mt-10 md:pt-8">
-                  <button
-                    onClick={() => redirectToWhatsApp(selectedProject.title)}
-                    className="font-['Inter',sans-serif] inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-4 text-base font-semibold text-white transition-all hover:bg-indigo-600 active:scale-95 sm:w-auto md:px-8 md:text-lg"
-                  >
-                    Get Quote on WhatsApp
-                    <MessageCircle className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Close Button */}
-              <button
-                onClick={closeModal}
-                className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-sm backdrop-blur transition-colors hover:bg-slate-100 md:right-6 md:top-6 md:h-12 md:w-12"
-                aria-label="Close modal"
-              >
-                <X className="h-5 w-5 md:h-6 md:w-6" />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Accessible project details modal */}
+      <ProjectModal
+        project={selectedProject}
+        onClose={closeModal}
+      />
     </section>
   );
 }
