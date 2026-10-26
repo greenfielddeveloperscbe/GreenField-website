@@ -30,7 +30,7 @@ export default function Footer() {
     {
       icon: Instagram,
       label: "Instagram",
-      href: "https://www.instagram.com/greenfield_housing/?hl=en",
+      href: "https://www.instagram.com/greenfield_developers_/?hl=en",
     },
     {
       icon: Facebook,

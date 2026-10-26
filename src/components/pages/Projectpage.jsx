@@ -67,7 +67,7 @@ function Reveal({ children, className = "", delay = 0, y = 30 }) {
 // DATA
 // =====================================================
 
-const INSTAGRAM_URL = "https://www.instagram.com/greenfield_housing/?hl=en";
+const INSTAGRAM_URL = "https://www.instagram.com/greenfield_developers_/?hl=en";
 
 const projects = [
   {
